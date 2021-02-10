@@ -100,49 +100,15 @@ def solid3(A):
     It is an error to input a matrix A where A^t is not full rank (i.e it is an error for the vectors to be linearly dependent)::
 
         sage: solid3(A=matrix([[-1,0,1],[3,0,0],[-1,0,0]]))                             
-        ---------------------------------------------------------------------------
-        ZeroDivisionError                         Traceback (most recent call last)
-        <ipython-input-9-091693cc48ae> in <module>
-        ----> 1 solid3(A=matrix([[-Integer(1),Integer(0),Integer(1)],[Integer(3),Integer(0),Integer(0)],[-Integer(1),Integer(0),Integer(0)]]))
-
-        <ipython-input-1-4155f7411cbd> in solid3(A)
-              4     v_2=A.row(Integer(2))
-              5     c_0=(v_0.cross_product(v_1).dot_product(v_0.cross_product(v_2)))/((v_0.cross_product(v_1).norm())*(v_0.cross_product(v_2).norm()))
-        ----> 6     c_1=(v_1.cross_product(v_0).dot_product(v_1.cross_product(v_2)))/((v_1.cross_product(v_0).norm())*(v_1.cross_product(v_2).norm()))
-              7     c_2=(v_2.cross_product(v_0).dot_product(v_2.cross_product(v_1)))/((v_2.cross_product(v_0).norm())*(v_2.cross_product(v_1).norm()))
-              8     a_0=arccos(c_0)
-
-        ~/Desktop/sage/local/lib/python3.9/site-packages/sage/rings/integer.pyx in sage.rings.integer.Integer.__truediv__ (build/cythonized/sage/rings/integer.c:14425)()
-            2044         elif type(right) is Rational:
-            2045             if mpq_sgn((<Rational>right).value) == 0:
-        -> 2046                 raise ZeroDivisionError("rational division by zero")
-             2047             # left * den(right) / num(right)
-            2048             y = <Rational> Rational.__new__(Rational)
-
+        Traceback (most recent call last):
+        ...
         ZeroDivisionError: rational division by zero        
     
     It is an error to input vectors from R^2 into this function.
 
         sage: solid3(A=matrix([[1,0],[3,4],[-1,2]]))                                    
-        ---------------------------------------------------------------------------
-        TypeError                                 Traceback (most recent call last)
-        <ipython-input-10-f2745955345c> in <module>
-        ----> 1 solid3(A=matrix([[Integer(1),Integer(0)],[Integer(3),Integer(4)],[-Integer(1),Integer(2)]]))
-
-        <ipython-input-9-4155f7411cbd> in solid3(A)
-            3     v_1=A.row(Integer(1))
-            4     v_2=A.row(Integer(2))
-        ----> 5     c_0=(v_0.cross_product(v_1).dot_product(v_0.cross_product(v_2)))/((v_0.cross_product(v_1).norm())*(v_0.cross_product(v_2).norm()))
-             6     c_1=(v_1.cross_product(v_0).dot_product(v_1.cross_product(v_2)))/((v_1.cross_product(v_0).norm())*(v_1.cross_product(v_2).norm()))
-             7     c_2=(v_2.cross_product(v_0).dot_product(v_2.cross_product(v_1)))/((v_2.cross_product(v_0).norm())*(v_2.cross_product(v_1).norm()))
-
-        ~/Desktop/sage/local/lib/python3.9/site-packages/sage/modules/free_module_element.pyx in sage.modules.free_module_element.FreeModuleElement.cross_product (build/cythonized/sage/modules/free_module_element.c:19820)()
-            2646 
-             2647         else:
-        -> 2648             raise TypeError("Cross product only defined for vectors of length three or seven, not (%s and %s)" % (len(l), len(r)))
-            2649 
-        2650     def cross_product_matrix(self):
-
+        Traceback (most recent call last):
+        ...
         TypeError: Cross product only defined for vectors of length three or seven, not (2 and 2)
 
 
@@ -154,8 +120,8 @@ def solid3(A):
 
     TESTS::
 
-            sage: solid3(A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))   #Check corner case vectors mutually orthogonal                         
-            0.125000000000000
+        sage: solid3(A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))   #Check corner case vectors mutually orthogonal                         
+        0.125000000000000
 
     """
     v_0=A.row(0)
