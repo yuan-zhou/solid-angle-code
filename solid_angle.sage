@@ -451,9 +451,9 @@ def solid_angle_3d(v, normalized=True):
     vnorm = [v[i].norm().n() for i in range(3)]
     angle = 2 * atan2(abs(v.determinant()), vnorm[0]*vnorm[1]*vnorm[2]+(v[0]*v[1])*vnorm[2]+(v[0]*v[2])*vnorm[1]+(v[1]*v[2])*vnorm[0])   # atan2(y, x) in [-pi, pi] 
     if normalized:
-        return angle/(4*pi.n())
+        return (angle/(4*pi)).n()
     else:
-        return angle
+        return (angle).n()
 
 def generate_orthogonal_parts(v):
     """
