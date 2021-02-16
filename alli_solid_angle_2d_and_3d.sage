@@ -1,12 +1,13 @@
 def solid2(A):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned by the vectors given by the two rows of A.
+    Return the normalized solid angle measure of the solid angle spanned by the
+    vectors given by the two rows of A.
 
     INPUT:
 
-    - ``A`` -- 2x2 matrix; A is a 2x2 matrix which should be input as A=matrix([[a,b],[c,d]])
-      where [a,b] and [c,d] represent the two extreme rays/vectors of the cone in R^2. The vectors
-      should be nonzero.
+    - ``A`` -- 2x2 matrix; A is a 2x2 matrix which should be input as
+    A=matrix([[a,b],[c,d]]) where [a,b] and [c,d] represent the two extreme
+    rays/vectors of the cone in R^2. The vectors should be nonzero.
 
     OUTPUT: the solid angle spanned by the two vectors, as a decimal
 
@@ -17,13 +18,13 @@ def solid2(A):
         sage: solid2(A=matrix([[0,1],[1,0]]))
         0.250000000000000
 
-    We now show the solid angle spanned by the vectors [1,0] and [-1, sqrt(3)]::
+    We now show the solid angle spanned by the vectors [1,0], [-1, sqrt(3)]::
 
         sage: solid2(A= matrix([[1,0],[-1,sqrt(3)]]))
         0.333333333333333
 
-    This example illustrates how the solid angle measure will not greater than 0.5
-    as the function always outputs the minimal angle between the two rays::
+    This example illustrates how the solid angle measure will not greater than
+    0.5 as the function always outputs the minimal angle between the two rays::
 
         sage: solid2(A= matrix([[1,0],[-1,-1]]))
         0.375000000000000
@@ -31,7 +32,8 @@ def solid2(A):
 hjkl
     .. NOTE::
 
-        This function uses the dot product of two vectors to determine the angle between them.
+        This function uses the dot product of two vectors to determine the
+        angle between them.
 
     It is an error to input the vectors directly, instead of a matrix::
 
@@ -39,65 +41,77 @@ hjkl
         Traceback (most recent call last):
         ...
         TypeError: solid2() takes 1 positional argument but 2 were given
-        
 
-    TESTS::
 
-        sage: solid2(A=matrix([[1,1],[-1,-1]]))   # Check for corner case where vectors antiparallel
+    The following tests check for corner cases where the vectors are
+    antiparallel, parallel and perpendicular, respectively.
+
+        sage: sol(A=matrix([[1,1],[-1,-1]]))
         0.500000000000000
 
-        sage: solid2(A=matrix([[1,2],[2,4]]))     # Check for corner case where vectors parallel
+        sage: sol(A=matrix([[1,2],[2,4]]))
         0.000000000000000
 
-        sage: solid2(A=matrix([[2,2],[-1,1]]))    # Check for corner case where vectors perpendicular
+        sage: sol(A=matrix([[2,2],[-1,1]]))
         0.250000000000000
     """
-    u=A.row(0)
-    v=A.row(1)
+    u = A.row(0)
+    v = A.row(1)
     p = u.dot_product(v)
-    a=u.norm()
-    b=v.norm()
-    cs=p/(a*b)
+    a = u.norm()
+    b = v.norm()
+    cs = p/(a*b)
     final_calc = arccos(cs) / (2*pi)
     return final_calc.numerical_approx()
 
 
 def solid3(A):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned by three vectors given by the rows of A.
+    Return the normalized solid angle measure of the solid angle spanned by
+    three vectors given by the rows of A.
 
     INPUT:
 
-    - ``A`` -- 3x3 matrix; A is a 3x3 matrix which should be input as A=matrix([[a,b],[c,d],[e,f]])
-      where [a,b], [c,d], and [e,f] represent the three extreme rays/vectors of the cone in R^3. The 
-      vectors should not be scalar multiples of one another.
+    - ``A`` -- 3x3 matrix; A is a 3x3 matrix which should be input as
+      A=matrix([[a,b],[c,d],[e,f]]) where [a,b], [c,d], and [e,f] represent
+      the three extreme rays/vectors of the cone in R^3.
+      The vectors should be linearly independent.
 
-    OUTPUT: the normalized solid angle measure spanned by the three vectors, as a decimal
+    OUTPUT:
+
+    - the normalized solid angle measure spanned by the three vectors,
+      as a decimal
 
     EXAMPLES:
 
-    This example shows the measure of the solid angle spanned by the vectors [1,0,0],[0,1,0], and [0,0,1]::
+    This example shows the measure of the solid angle spanned by the vectors
+    [1,0,0],[0,1,0], and [0,0,1]::
 
         sage: solid3(A=matrix([[1,0,0],[0,1,0],[0,0,1]]))
         0.125000000000000
 
-    This example shows the solid angle spanned by a set of linearly dependent vectors [2,0,0], [0,3,0] and [-4,-4,0]::
+    We now show the measure of the solid angle spanned by the vectors
+    [2,0,0], [0,3,0] and [-4,-4,0]::
 
         sage: solid3(A=matrix([[2,0,0],[0,3,0],[-4,-4,0]]))
         0.500000000000000
 
 
-    It is an error to input a matrix A where one row is a multiple of another::
+    It is an error to input a matrix A where A^t is not full rank
+    (i.e it is an error for the vectors to be linearly dependent)::
 
         sage: solid3(A=matrix([[-1,0,1],[3,0,0],[-1,0,0]]))
-        NaN
-    
+        Traceback (most recent call last):
+        ...
+        ZeroDivisionError: rational division by zero
+
     It is an error to input vectors from R^2 into this function::
 
         sage: solid3(A=matrix([[1,0],[3,4],[-1,2]]))
         Traceback (most recent call last):
         ...
-        TypeError: Cross product only defined for vectors of length three or seven, not (2 and 2)
+        TypeError: Cross product only defined for vectors of length three
+        or seven, not (2 and 2)
 
 
     .. NOTE::
@@ -106,9 +120,9 @@ def solid3(A):
         "Positivity Theorems for Solid-Angle Polynomials." It is based on Girard's formula for the
         surface area of a spherical triangle.
 
-    TESTS::
+    Check corner case vectors mutually orthogonal::
 
-        sage: solid3(A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))   #Check corner case vectors mutually orthogonal
+        sage: solid3(A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))
         0.125000000000000
     """
     v_0=A.row(0)
