@@ -46,13 +46,13 @@ hjkl
     The following tests check for corner cases where the vectors are
     antiparallel, parallel and perpendicular, respectively.
 
-        sage: sol(A=matrix([[1,1],[-1,-1]]))
+        sage: solid2(A=matrix([[1,1],[-1,-1]]))
         0.500000000000000
 
-        sage: sol(A=matrix([[1,2],[2,4]]))
+        sage: solid2(A=matrix([[1,2],[2,4]]))
         0.000000000000000
 
-        sage: sol(A=matrix([[2,2],[-1,1]]))
+        sage: solid2(A=matrix([[2,2],[-1,1]]))
         0.250000000000000
     """
     u = A.row(0)
