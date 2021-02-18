@@ -159,20 +159,17 @@ def solid3(A):
         sage: solid3(A=matrix([[1,0,0],[0,1,0],[0,0,1]]))
         0.125000000000000
 
-    We now show the measure of the solid angle spanned by the vectors
-    [2,0,0], [0,3,0] and [-4,-4,0]::
+    This example shows the solid angle spanned by a set of linearly
+    dependent vectors [2,0,0], [0,3,0] and [-4,-4,0]::
 
         sage: solid3(A=matrix([[2,0,0],[0,3,0],[-4,-4,0]]))
         0.500000000000000
-
 
     It is an error to input a matrix A where A^t is not full rank
     (i.e it is an error for the vectors to be linearly dependent)::
 
         sage: solid3(A=matrix([[-1,0,1],[3,0,0],[-1,0,0]]))
-        Traceback (most recent call last):
-        ...
-        ZeroDivisionError: rational division by zero
+        NaN
 
     It is an error to input vectors from R^2 into this function::
 
@@ -185,32 +182,31 @@ def solid3(A):
 
     .. NOTE::
 
-        This function uses the formula given in Proposition 6 of Beck et. al.'s  2015 paper entitled
-        "Positivity Theorems for Solid-Angle Polynomials." It is based on Girard's formula for the
-        surface area of a spherical triangle.
+        This function uses the formula given in Proposition 6 of
+        Beck et. al.'s 2015 paper entitled "Positivity Theorems
+        for Solid-Angle Polynomials."
 
     Check corner case vectors mutually orthogonal::
 
         sage: solid3(A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))
         0.125000000000000
     """
-    v_0=A.row(0)
-    v_1=A.row(1)
-    v_2=A.row(2)
-    c_01=v_0.cross_product(v_1)
-    c_02=v_0.cross_product(v_2)
-    c_12=v_1.cross_product(v_2)
-    n_01=c_01.norm().n()
-    n_02=c_02.norm().n()
-    n_12=c_12.norm().n()
-    d_0=c_01.dot_product(c_02)
-    d_1=c_01.dot_product(c_12)
-    d_2=c_02.dot_product(c_12)
-    a_0=arccos(d_0/(n_01*n_02)).n()
-    a_1=arccos(-d_1/(n_01*n_12)).n()
-    a_2=arccos(d_2/(n_02*n_12)).n()
-    sum=a_0+a_1+a_2
+    v_0 = A.row(0)
+    v_1 = A.row(1)
+    v_2 = A.row(2)
+    c_01 = v_0.cross_product(v_1)
+    c_02 = v_0.cross_product(v_2)
+    c_12 = v_1.cross_product(v_2)
+    n_01 = c_01.norm().n()
+    n_02 = c_02.norm().n()
+    n_12 = c_12.norm().n()
+    d_0 = c_01.dot_product(c_02)
+    d_1 = c_01.dot_product(c_12)
+    d_2 = c_02.dot_product(c_12)
+    a_0 = arccos(d_0/(n_01*n_02)).n()
+    a_1 = arccos(-d_1/(n_01*n_12)).n()
+    a_2 = arccos(d_2/(n_02*n_12)).n()
+    sum = a_0+a_1+a_2
     denom = (4*pi).n()
-    omega=(sum-pi)/denom
+    omega = (sum-pi)/denom
     return (omega).n()
-
