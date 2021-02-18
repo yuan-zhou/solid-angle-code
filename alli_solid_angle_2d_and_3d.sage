@@ -29,7 +29,7 @@ def solid2(A):
         sage: solid2(A= matrix([[1,0],[-1,-1]]))
         0.375000000000000
 
-hjkl
+
     .. NOTE::
 
         This function uses the dot product of two vectors to determine the
@@ -63,6 +63,75 @@ hjkl
     cs = p/(a*b)
     final_calc = arccos(cs) / (2*pi)
     return final_calc.numerical_approx()
+
+
+def solid_angle3(v):
+    r"""
+    Return the normalized solid angle measure of the solid angle spanned by
+    three vectors given by the rows of v.
+
+    INPUT:
+
+    - ``v`` -- 3x3 matrix; v is a 3x3 matrix which should be input as
+      A=matrix([[a,b],[c,d],[e,f]]) where [a,b], [c,d], and [e,f] represent
+      the three extreme rays/vectors of the cone in R^3. Any two vectors should
+      not be scalar multiples of each other.
+
+    OUTPUT:
+
+    - the normalized solid angle measure spanned by the three vectors,
+      as a decimal
+
+    EXAMPLES:
+
+    This example shows the measure of the solid angle spanned by the vectors
+    [1,0,0],[0,1,0], and [0,0,1]::
+
+        sage: solid_angle3(v=matrix([[1,0,0],[0,1,0],[0,0,1]]))
+        0.125000000000000
+
+    This example shows the solid angle spanned by a set of linearly
+    dependent vectors [2,0,0], [0,3,0] and [-4,-4,0]::
+
+        sage: solid_angle3(v=matrix([[2,0,0],[0,3,0],[-4,-4,0]]))
+        0.500000000000000
+
+    It is an error to input a matrix A where one row is a multiple of another::
+
+        sage: solid_angle3(v=matrix([[-1,0,1],[3,0,0],[-1,0,0]]))
+        NaN
+
+    It is an error to input vectors from R^2 into this function::
+
+        sage: solid_angle3(v=matrix([[1,0],[3,4],[-1,2]]))
+        Traceback (most recent call last):
+        ...
+        ValueError: self must be a square matrix
+
+    .. NOTE::
+
+        This function uses the formula given in Ribando's
+        2006 paper entitled "Measuring Solid Angles Beyond
+        Dimension Three." Refer to Oosterom and Strackee (1983)
+        for more information.
+
+    Check corner case vectors mutually orthogonal::
+
+        sage: solid_angle3(v=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))
+        0.125000000000000
+    """
+    vnorm = [v[i].norm().n() for i in range(3)]
+    a = v[0]/vnorm[0]
+    b = v[1]/vnorm[1]
+    c = v[2]/vnorm[2]
+    w = matrix([a, b, c])
+    det = abs(w.determinant())  # same as det of matrix [abc]
+    dab = a.dot_product(b)
+    dac = a.dot_product(c)
+    dbc = b.dot_product(c)
+    denom = 1+dab+dac+dbc
+    omega = 2*atan2(det, denom)
+    return (omega/(4*pi)).n()
 
 
 def solid3(A):
