@@ -143,8 +143,8 @@ def solid3(A):
 
     - ``A`` -- 3x3 matrix; A is a 3x3 matrix which should be input as
       A=matrix([[a,b],[c,d],[e,f]]) where [a,b], [c,d], and [e,f] represent
-      the three extreme rays/vectors of the cone in R^3.
-      The vectors should be linearly independent.
+      the three extreme rays/vectors of the cone in R^3. Any two vectors should
+      not be scalar multiples of each other.
 
     OUTPUT:
 
