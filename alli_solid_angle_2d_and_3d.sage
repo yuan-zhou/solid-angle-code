@@ -210,3 +210,191 @@ def solid3(A):
     denom = (4*pi).n()
     omega = (sum-pi)/denom
     return (omega).n()
+
+def simplicial_subcones_solidangle2(v):
+    r"""
+    Return the normalized solid angle measure of the solid angle spanned
+    by at least 2 vectors in R^2.
+
+    INPUT:
+
+    - ``v`` -- v is a matrix whose columns are the vectors spanning
+    the cone in R^2. The matrix should be input as
+    v = matrix([[a,b],[c,d], ... [e,f]]) where [a,b], [c,d],...,[e,f]
+    are the rays that span the cone.
+
+    OUTPUT: The normalized solid angle measure of each of the simplices
+    produced via the triangulation of the cone, and the normalized solid
+    angle spanned by the column vectors of the matrix v, as a decimal
+
+    EXAMPLES:
+
+    This example shows the solid angle spanned by the vectors [1,0],[0,1],
+    and [-1,0] in R^2::
+
+        sage: v = matrix([[1,0],[0,1],[-1,0]])
+        sage: simplicial_subcones_solidangle2(v)
+        [0.250000000000000, 0.250000000000000]
+        0.500000000000000
+
+    We now show the solid angle spanned by 4 vectors [1,1],[1,2],[-1,1],
+    and [-3,0]::
+
+        sage: v = matrix([[1,1],[1,2],[-1,1],[-3,0]])
+        sage: simplicial_subcones_solidangle2(v)
+        [0.0512081911747833, 0.198791808825217, 0.125000000000000]
+        0.375000000000000
+
+    This example illustrates how the solid angle measure can equal 1. That is,
+    the span of the rays is all of space::
+
+        sage: v = matrix([[1,1],[0,-1],[-1,-1],[-3,0]])
+        sage: simplicial_subcones_solidangle2(v)
+        [0.375000000000000, 0.375000000000000, 0.125000000000000,
+        0.125000000000000]
+        1.00000000000000
+
+    This example shows that when two vectors are given that are not
+    parallel, only the normalized measure of the solid angle is given
+    as the cone the vectors span is already simplicial.
+
+        sage: v = matrix([[2,3],[-3,-7]])
+        sage: simplicial_subcones_solidangle2(v)
+        0.470857008299079
+
+
+    .. NOTE::
+
+        This function is based on Dr. Yuan Zhou's code. It also uses the solid2
+        function which is defined above.
+
+        It is an error to input a 2 x 1 matrix, i.e. one vector::
+
+        sage: v = matrix([[1,3]])
+        sage: simplicial_subcones_solidangle2(v)
+        Traceback (most recent call last):
+        ...
+        IndexError: row index out of range
+
+    Check corner case where the input gives 2 vectors that are parallel
+
+        sage: v = matrix([[1,0],[2,0]])
+        sage: simplicial_subcones_solidangle2(v)
+        0.000000000000000
+
+        sage: solid2(A=matrix([[1,2],[2,4]]))
+        0.000000000000000
+
+        sage: solid2(A=matrix([[2,2],[-1,1]]))
+        0.250000000000000
+    """
+    if v.nrows() == 2:
+        return solid2(v)
+    else:
+        from sage.geometry.triangulation.point_configuration \
+            import PointConfiguration
+        origin = v.nrows()
+        pc = PointConfiguration(v.stack(vector([0]*v.ncols())), star=origin)
+        triangulation = pc.triangulate()
+        matrices = []
+        for simplex in triangulation:
+            matrices.append(matrix(v[i] for i in simplex if i != origin))
+        n = len(matrices)
+        results = []
+        for i in range(n):
+            results.append(solid2(matrices[i]))
+        print(results)
+        return sum([results[k] for k in range(len(results))])
+
+def simplicial_subcones_solidangle3(v):
+    r"""
+    Return the normalized solid angle measure of the solid angle spanned
+    by at least 3 vectors in R^3.
+
+    INPUT:
+
+    - ``v`` -- v is a matrix whose columns are the vectors spanning
+    the cone in R^3. The matrix should be input as
+    v = matrix([[a,b,c],[d,e,f], ... [p,q,r]]) where [a,b,c],[d,e,f],
+    ...[p,q,r] represent the rays of the cone.
+
+    OUTPUT: The normalized solid angle measure of each of the simplices
+    produced via the triangulation of the cone, and the normalized solid
+    angle spanned by the column vectors of the matrix v, as a decimal
+
+    EXAMPLES:
+
+    This example shows the solid angle spanned by the vectors [[1,0,0],
+    [-1,0,0], and [-1,3,1],[1,0,-1]::
+
+        sage: v = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
+        sage: simplicial_subcones_solidangle3(v)
+        [0.0920896306410492, 0.209118560533734]
+        0.301208191174783
+
+    We now show the solid angle spanned by the vectors [1,0,0],[0,1,0],
+    [-1,0,0],[0,0,-1], and [1,1,1]::
+
+        sage: v = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
+        sage: simplicial_subcones_solidangle3(v)
+        [0.0833333333333334, 0.125000000000000, 0.0833333333333334,
+         0.0833333333333334]
+        0.375000000000000
+
+    This example illustrates how the solid angle measure can equal 1. That is,
+    the span of the rays is all of space::
+
+        sage: v = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,1],[0,0,-1],[0,-1,0]])
+        sage: simplicial_subcones_solidangle3(v)
+        [0.125000000000000, 0.125000000000000, 0.125000000000000,
+        0.125000000000000, 0.125000000000000, 0.125000000000000,
+        0.125000000000000, 0.125000000000000]
+        1.00000000000000
+
+    This example shows that when three vectors are given that are not
+    parallel, only the normalized measure of the solid angle is given
+    as the cone the vectors span is already simplicial.
+
+        sage: v = matrix([[1,0,2],[-1,3,1],[1,0,-1]])
+        sage: simplicial_subcones_solidangle3(v)
+        0.181768746434821
+
+
+    .. NOTE::
+
+        This function is based on Dr. Yuan Zhou's code. It also uses the solid3
+        function which is defined above.
+
+        It is an error to input less than 3 vectors::
+
+        sage: v = matrix([[1,0,0],[0,2,3]])
+        sage: simplicial_subcones_solidangle3(v)
+        Traceback (most recent call last):
+        ...
+        IndexError: row index out of range
+
+        It is an error to input a matrix with rank less than 3::
+
+        sage: v=matrix([[1,0,0],[2,0,0],[-1,1,0],[-2,2,0]])
+        sage: simplicial_subcones_solidangle3(v)
+        Traceback (most recent call last):
+        ...
+        IndexError: row index out of range
+    """
+    if v.nrows() == v.rank():
+        return solid3(v)
+    else:
+        from sage.geometry.triangulation.point_configuration \
+            import PointConfiguration
+        origin = v.nrows()
+        pc = PointConfiguration(v.stack(vector([0]*v.ncols())), star=origin)
+        triangulation = pc.triangulate()
+        matrices = []
+        for simplex in triangulation:
+            matrices.append(matrix(v[i] for i in simplex if i != origin))
+        n = len(matrices)
+        results = []
+        for i in range(n):
+            results.append(solid3(matrices[i]))
+        print(results)
+        return sum([results[k] for k in range(len(results))])
