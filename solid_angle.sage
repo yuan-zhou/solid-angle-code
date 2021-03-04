@@ -509,12 +509,12 @@ def solid_angle_3d(A, simplicial=None, method="arctan"):
         [0]
         0
     """
-
+    import logging
     if simplicial is True:
         if method == "arctan":
-            return solid_angle3(A)
+            return solid_angle_simplicial_arctan_3d(A)
         elif method == "arccos":
-            return solid3(A)
+            return solid_angle_simplicial_arccos_3d(A)
     else:
         A_list = simplicial_subcones_decomposition(A)
         n = len(A_list)
