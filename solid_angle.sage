@@ -176,23 +176,26 @@ def solid_angle_simplicial_arctan_3d(v):
     This example shows the measure of the solid angle spanned by the vectors
     [1,0,0],[0,1,0], and [0,0,1]::
 
-        sage: solid_angle3(v=matrix([[1,0,0],[0,1,0],[0,0,1]]))
+        sage: v = matrix([[1,0,0],[0,1,0],[0,0,1]])
+        sage: solid_angle_simplicial_arctan_3d(v)
         0.125000000000000
 
     This example shows the solid angle spanned by a set of linearly
     dependent vectors [2,0,0], [0,3,0] and [-4,-4,0]::
 
-        sage: solid_angle3(v=matrix([[2,0,0],[0,3,0],[-4,-4,0]]))
+        sage: v = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
+        sage: solid_angle_simplicial_arctan_3d(v)
         0.500000000000000
 
     It is an error to input a matrix A where one row is a multiple of another::
 
-        sage: solid_angle3(v=matrix([[-1,0,1],[3,0,0],[-1,0,0]]))
+        sage: v = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
+        sage: solid_angle_simplicial_arctan_3d(v)
         NaN
 
     It is an error to input vectors from R^2 into this function::
 
-        sage: solid_angle3(v=matrix([[1,0],[3,4],[-1,2]]))
+        sage: solid_angle_simplicial_arctan_3d(v=matrix([[1,0],[3,4],[-1,2]]))
         Traceback (most recent call last):
         ...
         ValueError: self must be a square matrix
@@ -206,7 +209,8 @@ def solid_angle_simplicial_arctan_3d(v):
 
     Check corner case vectors mutually orthogonal::
 
-        sage: solid_angle3(v=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))
+        sage: v = matrix([[0,0,3],[-1,-1,0],[-2,2,0]])
+        sage: solid_angle_simplicial_arctan_3d(v)
         0.125000000000000
     """
     if v.nrows() < 3:
