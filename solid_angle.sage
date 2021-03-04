@@ -522,5 +522,138 @@ def solid_angle_3d(A, simplicial=None, method="arctan"):
         for i in range(n):
             results.append(
                 solid_angle_3d(A_list[i], simplicial=True, method=method))
-        print(results)
+        logging.info(results)
         return sum([results[k] for k in range(len(results))])
+
+
+def composition_of_n_into_k_parts(n, k):
+    r"""
+    Return a generator (like a list) of the weak integer compositions of
+    n into k parts. The list can be viewed using the command
+    [a for a in composition_of_n_into_k_parts(n,k)].
+
+    INPUT:
+
+    - ``n`` -- integer; n is the integer that we want to find the weak
+      compositions of.
+
+    - ``k`` -- integer; k is the positive integer giving the number of
+      parts we want in a composition of n.
+
+
+    OUTPUT:
+
+    - a generator object containing the k tuples that are weak compositions
+      of n. The tuples in the set of weak compositions can be listed using
+      [a for a in composition_of_n_into_k_parts(n,k)].
+
+    EXAMPLES:
+
+    This example shows the weak compositions of 3 into 2 parts::
+
+        sage: [a for a in composition_of_n_into_k_parts(3,2)]
+        [[0, 3], [1, 2], [2, 1], [3, 0]]
+
+    This example illustrates how the function can be used to list
+    all the weak compositions of 11 into 2 parts::
+
+        sage: [a for a in composition_of_n_into_k_parts(11,2)]
+        [[0, 11],
+        [1, 10],
+        [2, 9],
+        [3, 8],
+        [4, 7],
+        [5, 6],
+        [6, 5],
+        [7, 4],
+        [8, 3],
+        [9, 2],
+        [10, 1],
+        [11, 0]]
+
+    This example shows that when k=1, the list returned has only the
+    entry [n]::
+
+        sage: [a for a in composition_of_n_into_k_parts(4,1)]
+        [[4]]
+
+    This example shows that when n=0, the list returned has only one
+    entry, a k-tuple of 0's::
+
+        sage: [a for a in composition_of_n_into_k_parts(0,6)]
+        [[0, 0, 0, 0, 0, 0]]
+
+
+    .. NOTE::
+
+        The code for this function was developed by Dr. Zhou. It is
+        used to develop a truncation form for the multivariate power
+        series T_alpha in Ribando's paper "Measuring solid angles
+        beyond dimension three."
+    """
+    if k == 1:
+        yield [n]
+    elif n == 0:
+        yield [0] * k
+    else:
+        for i in range(n+1):
+            for c in composition_of_n_into_k_parts(n-i, k-1):
+                yield [i]+c
+
+
+def normalize_rows(A):
+    r"""
+    Return a matrix whose row vectors are the normalized row vectors
+    of the matrix A.
+
+    INPUT:
+
+    - ``A`` -- matrix; A is a matrix which should be input as
+      A=matrix([[a,...,b],[c,...,d],...,[e,...,f]]).
+
+    OUTPUT:
+
+    - a matrix whose rows are unit vectors. The vectors are the
+    normalized row vectors of A. The entries in the matrix are
+    given as approximations.
+
+    EXAMPLES:
+
+    This example shows the matrix whose rows are in the same
+    direction as the corresponding row vectors of A, but have
+    length 1::
+
+        sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
+        sage: normalize_rows(A)
+        [  1.00000000000000  0.000000000000000  0.000000000000000]
+        [ 0.000000000000000   1.00000000000000  0.000000000000000]
+        [-0.707106781186547 -0.707106781186547  0.000000000000000]
+
+    This example illustrates how the matrix that is returned
+    will have entries that are approximations::
+
+        sage: A = matrix([[-2,sqrt(2), 3],[-1,1, 2],[-3,0,-1.25]])
+        sage: normalize_rows(A)
+        [-0.516397779494322  0.365148371670111  0.774596669241483]
+        [-0.408248290463863  0.408248290463863  0.816496580927726]
+        [-0.923076923076923  0.000000000000000 -0.384615384615385]
+
+    This example shows the matrix with normalized row vectors coming
+    from a matrix in R^4::
+
+        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5, 0.1,
+        ....:     0.7, 0.5], [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
+        sage: normalize_rows(A)
+        [ 0.500000000000000 -0.500000000000000 -0.500000000000000
+          0.500000000000000]
+        [ 0.500000000000000  0.100000000000000  0.700000000000000
+          0.500000000000000]
+        [-0.571428571428571  0.571428571428571  0.142857142857143
+          0.571428571428571]
+        [-0.363636363636364 -0.454545454545455  0.727272727272727
+          0.363636363636364]
+    """
+    m = A.nrows()
+    vnorm = [A[i].norm().n() for i in range(m)]
+    M = matrix(m, lambda i, j: A[i, j].n() / (vnorm[i]))
+    return M
