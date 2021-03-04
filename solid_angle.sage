@@ -314,6 +314,7 @@ def simplicial_subcones_decomposition(A):
 
         This function is based on code by Dr. Yuan Zhou.
     """
+    import logging
     if A.rank() == A.nrows():
         return [A]
     else:
@@ -326,7 +327,7 @@ def simplicial_subcones_decomposition(A):
         for simplex in triangulation:
             matrices.append(matrix(A[i] for i in simplex if i != origin))
         if matrices[0].nrows() < len(A[0]):
-            print("cone(s) not simplicial")
+            logging.info("cone(s) not simplicial")
             return matrices
         else:
             return matrices
@@ -409,18 +410,20 @@ def solid_angle_2d(A, simplicial=None):
         [0]
         0
     """
+    import logging
+    logger = logging.getLogger(name="Logs.txt")
     if simplicial is True:
-        return solid2(A)
+        return solid_angle_simplicial_2d(A)
     else:
         if A.nrows() < 3:
-            return solid2(A)
+            return solid_angle_simplicial_2d(A)
         else:
             A_list = simplicial_subcones_decomposition(A)
             n = len(A_list)
             results = []
             for i in range(n):
                 results.append(solid_angle_2d(A_list[i], simplicial=True))
-            print(results)
+            logging.info(results)
             return sum([results[k] for k in range(len(results))])
 
 
