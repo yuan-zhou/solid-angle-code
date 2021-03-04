@@ -65,7 +65,7 @@ def solid2(A):
     return final_calc.numerical_approx()
 
 
-def solid_angle3(v):
+def solid_angle3(v): #arctan method
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
     three vectors given by the rows of v.
@@ -134,7 +134,7 @@ def solid_angle3(v):
     return (omega/(4*pi)).n()
 
 
-def solid3(A):
+def solid3(A): #arccos method
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
     three vectors given by the rows of A.
