@@ -411,7 +411,6 @@ def solid_angle_2d(A, simplicial=None):
         0
     """
     import logging
-    logger = logging.getLogger(name="Logs.txt")
     if simplicial is True:
         return solid_angle_simplicial_2d(A)
     else:
