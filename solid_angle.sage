@@ -483,7 +483,7 @@ def solid_angle_3d(A, simplicial=None, method="arctan"):
 
     This example shows that when the input gives a simplicial
     cone, only one value is printed in the list, and it matches
-    that of the normalized solid angle measure.
+    that of the normalized solid angle measure::
 
         sage: A = matrix([[1,0,2],[-1,3,1],[1,0,-1]])
         sage: solid_angle_3d(A)
