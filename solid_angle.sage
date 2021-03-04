@@ -1,4 +1,4 @@
-def solid2(A):
+def solid_angle_simplicial_2d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by the
     vectors given by the two rows of A.
@@ -15,18 +15,18 @@ def solid2(A):
 
     This example shows the solid angle spanned by the vectors [0,1] and [1,0]::
 
-        sage: solid2(A=matrix([[0,1],[1,0]]))
+        sage: solid_angle_simplicial_2d(A=matrix([[0,1],[1,0]]))
         0.250000000000000
 
     We now show the solid angle spanned by the vectors [1,0], [-1, sqrt(3)]::
 
-        sage: solid2(A= matrix([[1,0],[-1,sqrt(3)]]))
+        sage: solid_angle_simplicial_2d(A= matrix([[1,0],[-1,sqrt(3)]]))
         0.333333333333333
 
     This example illustrates how the solid angle measure will not greater than
     0.5 as the function always outputs the minimal angle between the two rays::
 
-        sage: solid2(A= matrix([[1,0],[-1,-1]]))
+        sage: solid_angle_simplicial_2d(A= matrix([[1,0],[-1,-1]]))
         0.375000000000000
 
 
@@ -37,22 +37,23 @@ def solid2(A):
 
     It is an error to input the vectors directly, instead of a matrix::
 
-        sage: solid2([1,0],[0,1])
+        sage: solid_angle_simplicial_2d([1,0],[0,1])
         Traceback (most recent call last):
         ...
-        TypeError: solid2() takes 1 positional argument but 2 were given
+        TypeError: solid_angle_simplicial_2d() takes 1 positional argument
+        but 2 were given
 
 
     The following tests check for corner cases where the vectors are
     antiparallel, parallel and perpendicular, respectively.
 
-        sage: solid2(A=matrix([[1,1],[-1,-1]]))
+        sage: solid_angle_simplicial_2d(A=matrix([[1,1],[-1,-1]]))
         0.500000000000000
 
-        sage: solid2(A=matrix([[1,2],[2,4]]))
+        sage: solid_angle_simplicial_2d(A=matrix([[1,2],[2,4]]))
         0.000000000000000
 
-        sage: solid2(A=matrix([[2,2],[-1,1]]))
+        sage: solid_angle_simplicial_2d(A=matrix([[2,2],[-1,1]]))
         0.250000000000000
     """
     if A.nrows() < 2:
@@ -68,7 +69,7 @@ def solid2(A):
         return final_calc.numerical_approx()
 
 
-def solid3(A):  # arccos method
+def solid_angle_simplicial_arccos_3d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
     three vectors given by the rows of A.
@@ -90,24 +91,27 @@ def solid3(A):  # arccos method
     This example shows the measure of the solid angle spanned by the vectors
     [1,0,0],[0,1,0], and [0,0,1]::
 
-        sage: solid3(A=matrix([[1,0,0],[0,1,0],[0,0,1]]))
+        sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
+        sage: solid_angle_simplicial_arccos_3d(A)
         0.125000000000000
 
     This example shows the solid angle spanned by a set of linearly
     dependent vectors [2,0,0], [0,3,0] and [-4,-4,0]::
 
-        sage: solid3(A=matrix([[2,0,0],[0,3,0],[-4,-4,0]]))
+        sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
+        sage: solid_angle_simplicial_arccos_3d(A)
         0.500000000000000
 
     It is an error to input a matrix A, which has two vectors
     that are scalar multiples of each other::
 
-        sage: solid3(A=matrix([[-1,0,1],[3,0,0],[-1,0,0]]))
+        sage: A = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
+        sage: solid_angle_simplicial_arccos_3d(A)
         NaN
 
     It is an error to input vectors from R^2 into this function::
 
-        sage: solid3(A=matrix([[1,0],[3,4],[-1,2]]))
+        sage: solid_angle_simplicial_arccos_3d(A=matrix([[1,0],[3,4],[-1,2]]))
         Traceback (most recent call last):
         ...
         TypeError: Cross product only defined for vectors of length three
@@ -122,7 +126,8 @@ def solid3(A):  # arccos method
 
     Check corner case vectors mutually orthogonal::
 
-        sage: solid3(A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]]))
+        sage: A=matrix([[0,0,3],[-1,-1,0],[-2,2,0]])
+        sage: solid_angle_simplicial_arccos_3d(A)
         0.125000000000000
     """
     if A.nrows() < 3:
@@ -149,7 +154,7 @@ def solid3(A):  # arccos method
         return (omega).n()
 
 
-def solid_angle3(v):  # arctan method
+def solid_angle_simplicial_arctan_3d(v):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
     three vectors given by the rows of v.
