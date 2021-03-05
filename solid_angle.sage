@@ -1,3 +1,8 @@
+load("logging.sage")
+
+############################################################
+##        Formulas for 2d and 3d simplicial cones         ##
+############################################################
 def solid_angle_simplicial_2d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by the
