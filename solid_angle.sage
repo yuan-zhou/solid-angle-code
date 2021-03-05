@@ -464,211 +464,11 @@ def simplicial_subcones_decomposition(A):
         matrices = []
         for simplex in triangulation:
             matrices.append(matrix(A[i] for i in simplex if i != origin))
-        if matrices[0].nrows() < len(A[0]):
-            logging.info("cone(s) not simplicial")
-            return matrices
-        else:
-            return matrices
-
-
-def solid_angle_2d(A, simplicial=None):
-    r"""
-     Return the normalized solid angle measure of the solid angle spanned
-     vectors in R^2.
-
-    INPUT:
-
-    - ``A`` -- v is a matrix whose columns are the vectors spanning
-    the cone in R^2. The matrix should be input as
-    v = matrix([[a,b],[c,d], ... [e,f]]) where [a,b], [c,d],...,[e,f]
-    are the rays that span the cone.
-
-    OUTPUT: The normalized solid angle measure of each of the simplicial
-    produced via the triangulation of the cone, and the normalized solid
-    angle spanned by the column vectors of the matrix A, as a decimal
-
-    EXAMPLES:
-
-    This example shows the solid angle spanned by the vectors [1,0],[0,1],
-    and [-1,0] in R^2::
-
-        sage: A = matrix([[1,0],[0,1],[-1,0]])
-        sage: solid_angle_2d(A)
-        [0.250000000000000, 0.250000000000000]
-        0.500000000000000
-
-    We now show the solid angle spanned by 4 vectors [1,1],[1,2],[-1,1],
-    and [-3,0]::
-
-        sage: A = matrix([[1,1],[1,2],[-1,1],[-3,0]])
-        sage: solid_angle_2d(A)
-        [0.0512081911747833, 0.198791808825217, 0.125000000000000]
-        0.375000000000000
-
-    This example illustrates how the solid angle measure can equal 1. That is,
-    the span of the rays is all of space::
-
-        sage: A = matrix([[1,1],[0,-1],[-1,-1],[-3,0]])
-        sage: solid_angle_2d(A)
-        [0.375000000000000, 0.375000000000000, 0.125000000000000,
-        0.125000000000000]
-        1.00000000000000
-
-    This example shows that when two vectors are not parallel and
-    simplicial=True, only the normalized measure of the solid angle
-    is given as the cone the vectors span is already simplicial.
-
-        sage: A = matrix([[2,3],[-3,-7]])
-        sage: solid_angle_2d(A, simplicial=True)
-        0.470857008299079
-
-
-    .. NOTE::
-
-        This function is based on Dr. Yuan Zhou's code. It also uses the solid2
-        function which is defined above.
-
-
-    Check corner case where the input gives 2 vectors that are parallel
-    or antiparallel
-
-        sage: A = matrix([[1,0],[2,0]])
-        sage: solid_angle_2d(A)
-        0.000000000000000
-
-        sage: A = matrix([[1,2],[-2,-4]])
-        sage: solid_angle_2d(A)
-        0.500000000000000
-
-    Check corner case where cone is spanned by less than 2 rays:
-
-        sage: A=matrix([[-2,5],[-4,10],[-1,2.5],[-0.4,1]])
-        sage: solid_angle_2d(A)
-        cone(s) not simplicial
-        [0]
-        0
-    """
-    import logging
-    if simplicial is True:
-        return solid_angle_simplicial_2d(A)
-    else:
-        if A.nrows() < 3:
-            return solid_angle_simplicial_2d(A)
-        else:
-            A_list = simplicial_subcones_decomposition(A)
-            n = len(A_list)
-            results = []
-            for i in range(n):
-                results.append(solid_angle_2d(A_list[i], simplicial=True))
-            logging.info(results)
-            return sum([results[k] for k in range(len(results))])
-
-
-def solid_angle_3d(A, simplicial=None, method="arctan"):
-    r"""
-    Return the normalized solid angle measure of the solid angle spanned
-    by vectors in R^3.
-
-    INPUT:
-
-    - ``A`` -- A is a matrix whose columns are the vectors spanning
-    the cone in R^3. The matrix should be input as
-    v = matrix([[a,b,c],[d,e,f], ... [p,q,r]]) where [a,b,c],[d,e,f],
-    ...[p,q,r] represent the rays of the cone.
-
-    OUTPUT: The normalized solid angle measure of each of the simplicial cones
-    produced via the triangulation of the cone, and the normalized solid
-    angle spanned by the column vectors of the matrix A, as a decimal
-
-    EXAMPLES:
-
-    This example shows the solid angle spanned by the vectors [[1,0,0],
-    [-1,0,0], and [-1,3,1],[1,0,-1]::
-
-        sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
-        sage: solid_angle_3d(A)
-        [0.0920896306410492, 0.209118560533734]
-        0.301208191174783
-
-    We now show the solid angle spanned by the vectors [1,0,0],[0,1,0],
-    [-1,0,0],[0,0,-1], and [1,1,1]::
-
-        sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
-        sage: solid_angle_3d(A)
-        [0.0833333333333334, 0.125000000000000, 0.0833333333333334,
-         0.0833333333333334]
-        0.375000000000000
-
-    This example illustrates how using the arcos method instead of the
-    default atan method gives the same result::
-
-        sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
-        sage: solid_angle_3d(A, method="arccos")
-        [0.0833333333333334, 0.125000000000000, 0.0833333333333334,
-         0.0833333333333334]
-        0.375000000000000
-
-
-    This example illustrates how the solid angle measure can equal 1. That is,
-    the span of the rays is all of space::
-
-        sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,1],[0,0,-1],[0,-1,0]])
-        sage: solid_angle_3d(A)
-        [0.125000000000000, 0.125000000000000, 0.125000000000000,
-        0.125000000000000, 0.125000000000000, 0.125000000000000,
-        0.125000000000000, 0.125000000000000]
-        1.00000000000000
-
-    This example shows that when the input gives a simplicial
-    cone, only one value is printed in the list, and it matches
-    that of the normalized solid angle measure::
-
-        sage: A = matrix([[1,0,2],[-1,3,1],[1,0,-1]])
-        sage: solid_angle_3d(A)
-        [0.181768746434821]
-        0.181768746434821
-
-
-    .. NOTE::
-
-        This function is based on Dr. Yuan Zhou's code. It also uses the solid3
-        function which is defined above.
-
-        Check corner case where cone is spanned by less than 3 rays::
-
-        sage: A=matrix([[1,0,0],[2,0,0],[-1,1,0],[-2,2,0]])
-        sage: solid_angle_3d(A)
-        cone(s) not simplicial
-        [0]
-        0
-
-        sage: A = matrix([[1,0,0],[0,2,3]])
-        sage: solid_angle_3d(A)
-        [0]
-        0
-    """
-    import logging
-    if simplicial is True:
-        if method == "arctan":
-            return solid_angle_simplicial_arctan_3d(A)
-        elif method == "arccos":
-            return solid_angle_simplicial_arccos_3d(A)
-    else:
-        A_list = simplicial_subcones_decomposition(A)
-        n = len(A_list)
-        results = []
-        for i in range(n):
-            results.append(
-                solid_angle_3d(A_list[i], simplicial=True, method=method))
-        logging.info(results)
-        return sum([results[k] for k in range(len(results))])
-
+        return matrices
 
 def composition_of_n_into_k_parts(n, k):
     r"""
-    Return a generator (like a list) of the weak integer compositions of
-    n into k parts. The list can be viewed using the command
-    [a for a in composition_of_n_into_k_parts(n,k)].
+    Return a generator of the weak integer compositions of n into k parts.
 
     INPUT:
 
@@ -682,52 +482,39 @@ def composition_of_n_into_k_parts(n, k):
     OUTPUT:
 
     - a generator object containing the k tuples that are weak compositions
-      of n. The tuples in the set of weak compositions can be listed using
-      [a for a in composition_of_n_into_k_parts(n,k)].
+      of n. Use list(composition_of_n_into_k_parts(n,k)) to view the list.
 
     EXAMPLES:
 
     This example shows the weak compositions of 3 into 2 parts::
 
-        sage: [a for a in composition_of_n_into_k_parts(3,2)]
+        sage: list(composition_of_n_into_k_parts(3,2))
         [[0, 3], [1, 2], [2, 1], [3, 0]]
 
-    This example illustrates how the function can be used to list
-    all the weak compositions of 11 into 2 parts::
+    This example illustrates how the function can be used to find the number of
+    the weak compositions of 11 into 2 parts::
 
-        sage: [a for a in composition_of_n_into_k_parts(11,2)]
-        [[0, 11],
-        [1, 10],
-        [2, 9],
-        [3, 8],
-        [4, 7],
-        [5, 6],
-        [6, 5],
-        [7, 4],
-        [8, 3],
-        [9, 2],
-        [10, 1],
-        [11, 0]]
+        sage: len(list(composition_of_n_into_k_parts(11,2)))
+        12
 
     This example shows that when k=1, the list returned has only the
     entry [n]::
 
-        sage: [a for a in composition_of_n_into_k_parts(4,1)]
+        sage: list(composition_of_n_into_k_parts(4,1))
         [[4]]
 
     This example shows that when n=0, the list returned has only one
     entry, a k-tuple of 0's::
 
-        sage: [a for a in composition_of_n_into_k_parts(0,6)]
+        sage: list(composition_of_n_into_k_parts(0,6))
         [[0, 0, 0, 0, 0, 0]]
 
 
     .. NOTE::
 
-        The code for this function was developed by Dr. Zhou. It is
-        used to develop a truncation form for the multivariate power
-        series T_alpha in Ribando's paper "Measuring solid angles
-        beyond dimension three."
+        This function is used to develop a truncation form for the
+        multivariate power series T_alpha in Ribando's paper
+        "Measuring solid angles beyond dimension three."
     """
     if k == 1:
         yield [n]
@@ -739,59 +526,3 @@ def composition_of_n_into_k_parts(n, k):
                 yield [i]+c
 
 
-def normalize_rows(A):
-    r"""
-    Return a matrix whose row vectors are the normalized row vectors
-    of the matrix A.
-
-    INPUT:
-
-    - ``A`` -- matrix; A is a matrix which should be input as
-      A=matrix([[a,...,b],[c,...,d],...,[e,...,f]]).
-
-    OUTPUT:
-
-    - a matrix whose rows are unit vectors. The vectors are the
-    normalized row vectors of A. The entries in the matrix are
-    given as approximations.
-
-    EXAMPLES:
-
-    This example shows the matrix whose rows are in the same
-    direction as the corresponding row vectors of A, but have
-    length 1::
-
-        sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
-        sage: normalize_rows(A)
-        [  1.00000000000000  0.000000000000000  0.000000000000000]
-        [ 0.000000000000000   1.00000000000000  0.000000000000000]
-        [-0.707106781186547 -0.707106781186547  0.000000000000000]
-
-    This example illustrates how the matrix that is returned
-    will have entries that are approximations::
-
-        sage: A = matrix([[-2,sqrt(2), 3],[-1,1, 2],[-3,0,-1.25]])
-        sage: normalize_rows(A)
-        [-0.516397779494322  0.365148371670111  0.774596669241483]
-        [-0.408248290463863  0.408248290463863  0.816496580927726]
-        [-0.923076923076923  0.000000000000000 -0.384615384615385]
-
-    This example shows the matrix with normalized row vectors coming
-    from a matrix in R^4::
-
-        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5, 0.1,
-        ....:     0.7, 0.5], [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
-        sage: normalize_rows(A)
-        [ 0.500000000000000 -0.500000000000000 -0.500000000000000
-          0.500000000000000]
-        [ 0.500000000000000  0.100000000000000  0.700000000000000
-          0.500000000000000]
-        [-0.571428571428571  0.571428571428571  0.142857142857143
-          0.571428571428571]
-        [-0.363636363636364 -0.454545454545455  0.727272727272727
-          0.363636363636364]
-    """
-    m = A.nrows()
-    vnorm = [A[i].norm().n() for i in range(m)]
-    M = matrix(m, lambda i, j: A[i, j].n() / (vnorm[i]))
-    return M
