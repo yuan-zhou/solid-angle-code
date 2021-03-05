@@ -375,22 +375,23 @@ def simplicial_subcones_decomposition(A):
 
     INPUT:
 
-    - ``A`` -- matrix; A is a matrix whose columns vectors are
-    a generating set for a cone (not necessarily simplicial.)
+    - ``A`` -- matrix; A is a matrix whose row vectors are a generating set for
+      a cone (not necessarily simplicial.)
 
     OUTPUT:
 
-    - a list of matrices that corresponds to the dissection of
-    the cone spanned by the columns of A into simplicial cones.
-    Each matrix represents a simplicial cone in the dissection.
+    - a list of matrices that corresponds to the dissection of the cone
+      spanned by the rows of A into simplicial cones.
+      Each matrix represents a simplicial cone in the dissection.
 
     EXAMPLES:
 
     This example shows that the cone spanned by [1,0,0],[0,1,0],[0,0,1],
     and [-1,0,0] can be dissected into two simplicial cones, one with
     extreme rays [1,0,0], [0,1,0], [0,0,1] and the other with extreme
-     rays [0,1,0], [0,0,1], [-1,0,0]::
+    rays [0,1,0], [0,0,1], [-1,0,0]::
 
+        sage: logging.disable(logging.NOTSET)
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1],[-1,0,0]])
         sage: simplicial_subcones_decomposition(A)
         [
@@ -400,7 +401,7 @@ def simplicial_subcones_decomposition(A):
         ]
 
     This example shows that if the input corresponds to a simplicial cone,
-    the function returns the input::
+    the function returns [input matrix itself]::
 
         sage: A = matrix([[1,0,0],[1,2,3],[-5,4,2]])
         sage: simplicial_subcones_decomposition(A)
@@ -411,10 +412,10 @@ def simplicial_subcones_decomposition(A):
         ]
 
     This example shows that the function works in higher dimensions,
-    such as R^4:
+    such as R^4. The input can as well be in the form of a list of vectors::
 
         sage: A_in = [[1,0,-2,0],[1,2,3,-2],[-1,3,4,4],[-2,-1,0,0],[1,1,1,3]]
-        sage: simplicial_subcones_decomposition(A=matrix(A_in))
+        sage: simplicial_subcones_decomposition(A_in)
         [
         [ 1  0 -2  0]  [ 1  0 -2  0]  [ 1  0 -2  0]  [ 1  2  3 -2]
         [ 1  2  3 -2]  [ 1  2  3 -2]  [-1  3  4  4]  [-1  3  4  4]
@@ -423,35 +424,35 @@ def simplicial_subcones_decomposition(A):
         ]
 
 
-    This example shows that if the vectors in A are in R^n, and the
-    cone spanned by the vectors is spanned by less than n extreme
-    rays, then it is noted that the cone(s) are not simplicial::
+    This example shows that if the vectors in A are in R^n, but the
+    cone spanned by the vectors lives in a lower dimensional space,
+    then it is noted that the cone(s) are not simplicial::
 
         sage: A = matrix([[1,0,0],[0,1,0],[3,2,0]])
         sage: simplicial_subcones_decomposition(A)
-        cone(s) not simplicial
+        WARNING: cone(s) not full-dimensional
         [
         [1 0 0]  [0 1 0]
         [3 2 0], [3 2 0]
         ]
 
-    This example shows that the cone in R^4 spanned by the column
-    vectors of A is actually spanned by 3 vectors. The triangulation
-    still dissects it so that the ::
+    This example shows that the cone in R^4 spanned by the row
+    vectors of A is actually a halfspace of affine dimension 2.
+    The triangulation dissects it into three 2d subcones::
 
         sage: A_in = [[-3,0,5,0],[0,0,1,0],[-4,0,0,0],[-1,0,0,0],[0,0,-4,0]]
-        sage: simplicial_subcones_decomposition(A=matrix(A_in))
-        cone(s) not simplicial
+        sage: simplicial_subcones_decomposition(A_in)
+        WARNING: cone(s) not full-dimensional
         [
         [-3  0  5  0]  [-3  0  5  0]  [-4  0  0  0]
         [ 0  0  1  0], [-4  0  0  0], [ 0  0 -4  0]
         ]
-
-    .. NOTE::
-
-        This function is based on code by Dr. Yuan Zhou.
     """
-    import logging
+    if not hasattr(A, 'nrows'):
+        A = matrix(A)
+    r = A.rank()
+    if r < A.ncols():
+        logging.warning("cone(s) not full-dimensional")
     if A.rank() == A.nrows():
         return [A]
     else:
