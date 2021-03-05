@@ -10,9 +10,9 @@ def solid_angle_simplicial_2d(A):
 
     INPUT:
 
-    - ``A`` -- 2x2 matrix; A is a 2x2 matrix which should be input as
-    A=matrix([[a,b],[c,d]]) where [a,b] and [c,d] represent the two extreme
-    rays/vectors of the cone in R^2. The vectors should be nonzero.
+    - ``A`` -- 2x2 matrix in the form of matrix([[a,b],[c,d]]) or
+      simply [[a,b],[c,d]], where [a,b] and [c,d] represent the two extreme
+      rays/vectors of the cone in R^2. The vectors should be nonzero.
 
     OUTPUT: the solid angle spanned by the two vectors, as a decimal
 
@@ -20,59 +20,54 @@ def solid_angle_simplicial_2d(A):
 
     This example shows the solid angle spanned by the vectors [0,1] and [1,0]::
 
-        sage: solid_angle_simplicial_2d(A=matrix([[0,1],[1,0]]))
+        sage: solid_angle_simplicial_2d(matrix([[0,1],[1,0]]))
+        0.250000000000000
+
+    The input can be a list of vectors instead of a matrix::
+
+        sage: solid_angle_simplicial_2d([[0,1],[1,0]])
         0.250000000000000
 
     We now show the solid angle spanned by the vectors [1,0], [-1, sqrt(3)]::
 
-        sage: solid_angle_simplicial_2d(A= matrix([[1,0],[-1,sqrt(3)]]))
+        sage: solid_angle_simplicial_2d(matrix([[1,0],[-1,sqrt(3)]]))
         0.333333333333333
 
     This example illustrates how the solid angle measure will not greater than
     0.5 as the function always outputs the minimal angle between the two rays::
 
-        sage: solid_angle_simplicial_2d(A= matrix([[1,0],[-1,-1]]))
+        sage: solid_angle_simplicial_2d(matrix([[1,0],[-1,-1]]))
         0.375000000000000
-
 
     .. NOTE::
 
         This function uses the dot product of two vectors to determine the
         angle between them.
 
-    It is an error to input the vectors directly, instead of a matrix::
-
-        sage: solid_angle_simplicial_2d([1,0],[0,1])
-        Traceback (most recent call last):
-        ...
-        TypeError: solid_angle_simplicial_2d() takes 1 positional argument
-        but 2 were given
-
-
     The following tests check for corner cases where the vectors are
     antiparallel, parallel and perpendicular, respectively.
 
-        sage: solid_angle_simplicial_2d(A=matrix([[1,1],[-1,-1]]))
+        sage: solid_angle_simplicial_2d(matrix([[1,1],[-1,-1]]))
         0.500000000000000
 
-        sage: solid_angle_simplicial_2d(A=matrix([[1,2],[2,4]]))
+        sage: solid_angle_simplicial_2d(matrix([[1,2],[2,4]]))
         0.000000000000000
 
-        sage: solid_angle_simplicial_2d(A=matrix([[2,2],[-1,1]]))
+        sage: solid_angle_simplicial_2d(matrix([[2,2],[-1,1]]))
         0.250000000000000
     """
-    if A.nrows() < 2:
-        return 0
-    else:
-        u = A.row(0)
-        v = A.row(1)
-        p = u.dot_product(v)
-        a = u.norm()
-        b = v.norm()
-        cs = p/(a*b)
-        final_calc = arccos(cs) / (2*pi)
-        return final_calc.numerical_approx()
-
+    if not hasattr(A, 'nrows'):
+        A = matrix(A)
+    if A.nrows() != 2 or A.ncols() != 2:
+        raise ValueError("input matrix has incorrect dimension.")
+    u = A.row(0)
+    v = A.row(1)
+    p = u.dot_product(v)
+    a = u.norm()
+    b = v.norm()
+    cs = p/(a*b)
+    final_calc = arccos(cs) / (2*pi)
+    return final_calc.numerical_approx()
 
 def solid_angle_simplicial_arccos_3d(A):
     r"""
