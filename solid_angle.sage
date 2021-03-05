@@ -157,10 +157,9 @@ def solid_angle_simplicial_arctan_3d(A):
 
     INPUT:
 
-    - ``v`` -- 3x3 matrix; v is a 3x3 matrix which should be input as
-      A=matrix([[a,b],[c,d],[e,f]]) where [a,b], [c,d], and [e,f] represent
-      the three extreme rays/vectors of the cone in R^3. Any two vectors should
-      not be scalar multiples of each other.
+    - ``A`` -- 3x3 matrix or a list of three vectors in R^3 where the row
+      vectors represent the three extreme rays/vectors of the cone in R^3.
+      Any two vectors should not be scalar multiples of each other.
 
     OUTPUT:
 
@@ -172,29 +171,34 @@ def solid_angle_simplicial_arctan_3d(A):
     This example shows the measure of the solid angle spanned by the vectors
     [1,0,0],[0,1,0], and [0,0,1]::
 
-        sage: v = matrix([[1,0,0],[0,1,0],[0,0,1]])
-        sage: solid_angle_simplicial_arctan_3d(v)
+        sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
+        sage: solid_angle_simplicial_arctan_3d(A)
         0.125000000000000
 
-    This example shows the solid angle spanned by a set of linearly
-    dependent vectors [2,0,0], [0,3,0] and [-4,-4,0]::
+    The input can be a list of vectors instead of a matrix::
 
-        sage: v = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
-        sage: solid_angle_simplicial_arctan_3d(v)
+        sage: solid_angle_simplicial_arctan_3d([[0,0,3],[-1,-1,0],[-2,2,0]])
+        0.125000000000000
+
+    This example shows the solid angle of a cone in 3d with affine dimension 2.
+    In contrast to ``solid_angle_3d``, this formula gives a non-zero angle::
+
+        sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
+        sage: solid_angle_simplicial_arctan_3d(A)
         0.500000000000000
 
     It is an error to input a matrix A where one row is a multiple of another::
 
-        sage: v = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
-        sage: solid_angle_simplicial_arctan_3d(v)
+        sage: A = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
+        sage: solid_angle_simplicial_arctan_3d(A)
         NaN
 
     It is an error to input vectors from R^2 into this function::
 
-        sage: solid_angle_simplicial_arctan_3d(v=matrix([[1,0],[3,4],[-1,2]]))
+        sage: solid_angle_simplicial_arctan_3d(matrix([[1,0],[3,4],[-1,2]]))
         Traceback (most recent call last):
         ...
-        ValueError: self must be a square matrix
+        ValueError: input matrix has incorrect dimension.
 
     .. NOTE::
 
@@ -202,6 +206,23 @@ def solid_angle_simplicial_arctan_3d(A):
         2006 paper entitled "Measuring Solid Angles Beyond
         Dimension Three." Refer to Oosterom and Strackee (1983)
         for more information.
+    """
+    if not hasattr(A, 'nrows'):
+        A = matrix(A)
+    if A.nrows() != 3 or A.ncols() != 3:
+        raise ValueError("input matrix has incorrect dimension.")
+    vnorm = [A[i].norm().n() for i in range(3)]
+    a = A[0]/vnorm[0]
+    b = A[1]/vnorm[1]
+    c = A[2]/vnorm[2]
+    w = matrix([a, b, c])
+    det = abs(w.determinant())  # same as det of matrix [abc]
+    dab = a.dot_product(b)
+    dac = a.dot_product(c)
+    dbc = b.dot_product(c)
+    denom = 1+dab+dac+dbc
+    omega = 2*atan2(det, denom)
+    return (omega/(4*pi)).n()
 
     Check corner case vectors mutually orthogonal::
 
