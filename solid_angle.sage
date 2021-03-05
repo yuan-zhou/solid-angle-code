@@ -224,29 +224,149 @@ def solid_angle_simplicial_arctan_3d(A):
     omega = 2*atan2(det, denom)
     return (omega/(4*pi)).n()
 
-    Check corner case vectors mutually orthogonal::
+############################################################
+##       Main functions of solid angle in 2d and 3d       ##
+############################################################
+def solid_angle_2d(A):
+    r"""
+    Return the normalized solid angle measure of the solid angle spanned
+    vectors in R^2.
 
-        sage: v = matrix([[0,0,3],[-1,-1,0],[-2,2,0]])
-        sage: solid_angle_simplicial_arctan_3d(v)
-        0.125000000000000
+    INPUT:
+
+    - ``A`` -- n by 2 matrix whose rows vectors span the cone in R^2 of which
+      we look for the solid angle. The input can be in the form of a matrix or
+      as a list of vectors in R^2.
+
+    OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
+
+    EXAMPLES:
+
+    The following three examples show the solid angles spanned by the given
+    two, three or four vectors in R^2, respectively::
+
+        sage: logging.disable(logging.WARNING)
+        sage: A = matrix([[2,3],[-3,-7]])
+        sage: solid_angle_2d(A)
+        0.470857008299079
+
+        sage: A = matrix([[1,0],[0,1],[-1,0]])
+        sage: solid_angle_2d(A)
+        0.500000000000000
+
+        sage: A = matrix([[1,1],[1,2],[-1,1],[-3,0]])
+        sage: solid_angle_2d(A)
+        0.375000000000000
+
+
+    This example illustrates how the solid angle measure can equal 1. That is,
+    the span of the rays is all of space::
+
+        sage: A = matrix([[1,1],[0,-1],[-1,-1],[-3,0]])
+        sage: solid_angle_2d(A)
+        1.00000000000000
+
+    Check corner case where the where cones have affine dimension less than 2::
+
+        sage: A = matrix([[1,0],[2,0]])
+        sage: solid_angle_2d(A)
+        0
+        sage: A = matrix([[1,2],[-2,-4]])
+        sage: solid_angle_2d(A)
+        0
+        sage: A = matrix([[-2,5],[-4,10],[-1,5/2],[-2/5,1]])
+        sage: solid_angle_2d(A)
+        0
     """
-    if v.nrows() < 3:
+    if not hasattr(A, 'nrows'):
+        A = matrix(A)
+    if A.rank() < 2:
+        logging.warning("cone not full-dimensional")
         return 0
+    if A.nrows() == 2:
+        return solid_angle_simplicial_2d(A)
+    A_list = simplicial_subcones_decomposition(A)
+    logging.info("Decompose into simplicial subcones %s" % A_list)
+    results = [solid_angle_simplicial_2d(Ai) for Ai in A_list]
+    logging.info("Solid angles of the subcones are %s" % results)
+    return sum(results)
+
+def solid_angle_3d(A, method="arctan"):
+    r"""
+    Return the normalized solid angle measure of the solid angle spanned
+    by vectors in R^3.
+
+    INPUT:
+
+    - ``A`` -- n by 3 matrix whose rows vectors span the cone in R^3 of which
+      we look for the solid angle. The input can be in the form of a matrix or
+      as a list of vectors in R^2.
+
+    - ``method`` -- (optional) Either ``arctan`` or ``arccos``
+
+    OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
+
+    EXAMPLES:
+
+    The following three examples show the solid angles spanned by the given
+    three, four or five vectors in R^3, respectively::
+
+        sage: logging.disable(logging.WARNING)
+        sage: A = matrix([[1,0,2],[-1,3,1],[1,0,-1]])
+        sage: solid_angle_3d(A)
+        0.181768746434821
+
+        sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
+        sage: solid_angle_3d(A)
+        0.301208191174783
+
+        sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
+        sage: solid_angle_3d(A)
+        0.375000000000000
+
+    This example illustrates how using the arcos method instead of the
+    default atan method gives the same result::
+
+        sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
+        sage: solid_angle_3d(A, method="arccos")
+        0.375000000000000
+
+    This example illustrates how the solid angle measure can equal 1. That is,
+    the span of the rays is all of space::
+
+        sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,1],[0,0,-1],[0,-1,0]])
+        sage: solid_angle_3d(A)
+        1.00000000000000
+
+    Check corner case where the where cones have affine dimension less than 3::
+
+        sage: solid_angle_3d([[1,0,0],[2,0,0],[-1,1,0],[-2,2,0]])
+        0
+        sage: solid_angle_3d(matrix([[1,0,0],[0,2,3]]))
+        0
+    """
+    if not hasattr(A, 'nrows'):
+        A = matrix(A)
+    if A.rank() < 3:
+        logging.warning("cone not full-dimensional")
+        return 0
+    if method == "arctan":
+        solid_angle_function = solid_angle_simplicial_arctan_3d
+    elif method == "arccos":
+        solid_angle_function = solid_angle_simplicial_arccos_3d
     else:
-        vnorm = [v[i].norm().n() for i in range(3)]
-        a = v[0]/vnorm[0]
-        b = v[1]/vnorm[1]
-        c = v[2]/vnorm[2]
-        w = matrix([a, b, c])
-        det = abs(w.determinant())  # same as det of matrix [abc]
-        dab = a.dot_product(b)
-        dac = a.dot_product(c)
-        dbc = b.dot_product(c)
-        denom = 1+dab+dac+dbc
-        omega = 2*atan2(det, denom)
-        return (omega/(4*pi)).n()
+        raise ValueError("method %s of solid_angle_3d is unknown" % method)
+    if A.nrows() == 3:
+        return solid_angle_function(A)
+    A_list = simplicial_subcones_decomposition(A)
+    logging.info("Decompose into simplicial cones %s" % A_list)
+    results = [solid_angle_function(Ai) for Ai in A_list]
+    logging.info("Solid angles of the subcones are %s" % results)
+    return sum(results)
 
-
+############################################################
+##                   Helper functions                     ##
+############################################################
 def simplicial_subcones_decomposition(A):
     r"""
     Return a list of matrices that give the extreme rays
