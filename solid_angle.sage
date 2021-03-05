@@ -1,8 +1,9 @@
 load("logging.sage")
 
-############################################################
-##        Formulas for 2d and 3d simplicial cones         ##
-############################################################
+
+# **********************************************************
+#         Formulas for 2d and 3d simplicial cones
+# **********************************************************
 def solid_angle_simplicial_2d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by the
@@ -68,6 +69,7 @@ def solid_angle_simplicial_2d(A):
     cs = p/(a*b)
     final_calc = arccos(cs) / (2*pi)
     return final_calc.numerical_approx()
+
 
 def solid_angle_simplicial_arccos_3d(A):
     r"""
@@ -150,6 +152,7 @@ def solid_angle_simplicial_arccos_3d(A):
     omega = (sum-pi)/denom
     return (omega).n()
 
+
 def solid_angle_simplicial_arctan_3d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
@@ -224,9 +227,10 @@ def solid_angle_simplicial_arctan_3d(A):
     omega = 2*atan2(det, denom)
     return (omega/(4*pi)).n()
 
-############################################################
-##       Main functions of solid angle in 2d and 3d       ##
-############################################################
+
+# **********************************************************
+#        Main functions of solid angle in 2d and 3d
+# **********************************************************
 def solid_angle_2d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned
@@ -290,6 +294,7 @@ def solid_angle_2d(A):
     results = [solid_angle_simplicial_2d(Ai) for Ai in A_list]
     logging.info("Solid angles of the subcones are %s" % results)
     return sum(results)
+
 
 def solid_angle_3d(A, method="arctan"):
     r"""
@@ -364,9 +369,10 @@ def solid_angle_3d(A, method="arctan"):
     logging.info("Solid angles of the subcones are %s" % results)
     return sum(results)
 
-############################################################
-##                   Helper functions                     ##
-############################################################
+
+# **********************************************************
+#                    Helper functions
+# **********************************************************
 def simplicial_subcones_decomposition(A):
     r"""
     Return a list of matrices that give the extreme rays
@@ -466,6 +472,7 @@ def simplicial_subcones_decomposition(A):
             matrices.append(matrix(A[i] for i in simplex if i != origin))
         return matrices
 
+
 def composition_of_n_into_k_parts(n, k):
     r"""
     Return a generator of the weak integer compositions of n into k parts.
@@ -524,5 +531,3 @@ def composition_of_n_into_k_parts(n, k):
         for i in range(n+1):
             for c in composition_of_n_into_k_parts(n-i, k-1):
                 yield [i]+c
-
-
