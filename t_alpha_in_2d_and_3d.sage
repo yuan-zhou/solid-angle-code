@@ -1,3 +1,5 @@
+load("solid_angle.sage")
+
 def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
     r"""
     Return an estimate of the normalized solid angle measure of the
@@ -31,6 +33,7 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
     the vectors [1,0] and [-1,-1]. The exact value (based on the
     arctan formula) is 0.375.::
 
+        sage: logging.disable(logging.INFO)
         sage: A = matrix([[1,0],[-1,-1]])
         sage: T_alpha(A)
         0.374998211389711
@@ -56,11 +59,11 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
     spanned by vectors R^5, with different deg values.::
 
         sage: A = matrix([[1,2,-1,2,0],[-3,0,0,0,2],[1,-2,-0.4,0,0],
-        [0,0,0,-2,1],[-1,-1,0,-1,0]])
+        ....:            [0,0,0,-2,1],[-1,-1,0,-1,0]])
         sage: T_alpha(A, deg=10)
         0.0401110745049663
 
-        sage: T_alpha(v, deg=12)
+        sage: T_alpha(A, deg=12)
         0.0434187223547473
 
     This example demonstrates that T_alpha works even when the input is
@@ -70,7 +73,7 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
         sage: T_alpha(A)
         0.301205606214782
 
-    TESTS::
+    TESTS:
 
     The example below is based on Example 3.4 in Gourion and Seeger (see
     notes). For the matrix [[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
@@ -83,7 +86,7 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
     the case.::
 
         sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
-        [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]])
+        ....:     [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]])
         sage: T_alpha(A, deg=0)
         0.0487012987012987
 
@@ -120,7 +123,6 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
         normalized volume of convex polyhedral cones, in comparison
         to a half space. See Theorem 4.1 and Remark 4.2.
     """
-    import logging
     if simplicial is True:
         if M.det() == 0:
             print("determinant is 0")
@@ -133,7 +135,7 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
             alpha = [0]*da
             for i in range(d-1):
                 for j in range(i+1, d):
-                    k = (2*d-i-1)*i/2 + j-i-1 #HOW
+                    k = (2*d-i-1)*i/2 + j-i-1
                     alpha[k] = v[i] * v[j]
             partial_sum = 0
             for n in range(deg+1):
@@ -173,82 +175,8 @@ def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
         logging.info(results)
         return sum(results)
 
-
-def composition_of_n_into_k_parts(n, k):
-    r"""
-    Return a generator (like a list) of the weak integer compositions of
-    n into k parts. The list can be viewed using the command
-    [a for a in composition_of_n_into_k_parts(n,k)].
-
-    INPUT:
-
-    - ``n`` -- integer; n is the integer that we want to find the weak
-      compositions of.
-
-    - ``k`` -- integer; k is the positive integer giving the number of
-      parts we want in a composition of n.
-
-
-    OUTPUT:
-
-    - a generator object containing the k tuples that are weak compositions
-      of n.
-
-    EXAMPLES:
-
-    This example shows the weak compositions of 3 into 2 parts::
-
-        sage: composition_of_n_into_k_parts(3,2)
-        <generator object composition_of_n_into_k_parts at 0x219499190>
-        sage: [a for a in composition_of_n_into_k_parts(3,2)]
-        [[0, 3], [1, 2], [2, 1], [3, 0]]
-
-    This example illustrates how the function can be used to list
-    all the weak compositions of 11 into 2 parts::
-
-        sage: [a for a in composition_of_n_into_k_parts(11,2)]
-        [[0, 11],
-        [1, 10],
-        [2, 9],
-        [3, 8],
-        [4, 7],
-        [5, 6],
-        [6, 5],
-        [7, 4],
-        [8, 3],
-        [9, 2],
-        [10, 1],
-        [11, 0]]
-
-    This example shows that when k=1, the list returned has only the
-    entry [n]::
-
-        sage: [a for a in composition_of_n_into_k_parts(4,1)]
-        [[4]]
-
-    This example shows that when n=0, the list returned has only one
-    entry, a k-tuple of 0's::
-
-        sage: [a for a in composition_of_n_into_k_parts(0,6)]
-        [[0, 0, 0, 0, 0, 0]]
-
-
-    .. NOTE::
-
-        The code for this function was developed by Dr. Zhou.
-    """
-    if k == 1:
-        yield [n]
-    elif n == 0:
-        yield [0] * k
-    else:
-        for i in range(n+1):
-            for c in composition_of_n_into_k_parts(n-i, k-1):
-                yield [i]+c
-
-
 def normalize_rows(A):
-   r"""
+    r"""
     Return a matrix whose row vectors are the normalized row vectors
     of the matrix A.
 
@@ -286,6 +214,7 @@ def normalize_rows(A):
 
     This example shows the matrix with normalized row vectors coming
     from a matrix in R^4::
+
         sage: A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],[-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])                       
         sage: normalize_rows(A)
         [ 0.500000000000000 -0.500000000000000 -0.500000000000000  0.500000000000000]
@@ -293,35 +222,34 @@ def normalize_rows(A):
         [-0.571428571428571  0.571428571428571  0.142857142857143  0.571428571428571]
         [-0.363636363636364 -0.454545454545455  0.727272727272727  0.363636363636364]
     """
-        m = A.nrows()
-        vnorm = [A[i].norm().n() for i in range(m)]
-        M = matrix(m, lambda i,j:A[i,j].n() / (vnorm[i])); M
-        return M
+    m = A.nrows()
+    vnorm = [A[i].norm().n() for i in range(m)]
+    M = matrix(m, lambda i,j:A[i,j].n() / (vnorm[i])); M
+    return M
 
 
 def M_alpha_posdef(v):
     r"""
-        Dr. Zhou's examples:
-        v = matrix([[1,0,1],[0,1,1],[0,0,1]]) 
-        v = matrix([[1,0,1],[0,1,1],[0,0,-1]])
-        More:
-        v=matrix([[1,-1,0],[2,1,1],[-1,0,0]])
-        v=matrix([[-1,-1,0],[0,-1,-1],[-1,-1,-1]])
-        v=matrix([[-1,-1,0],[0,-0.5,-1],[-1,-1,-1]])
+    Dr. Zhou's examples:
+    v = matrix([[1,0,1],[0,1,1],[0,0,1]]) 
+    v = matrix([[1,0,1],[0,1,1],[0,0,-1]])
+    More:
+    v=matrix([[1,-1,0],[2,1,1],[-1,0,0]])
+    v=matrix([[-1,-1,0],[0,-1,-1],[-1,-1,-1]])
+    v=matrix([[-1,-1,0],[0,-0.5,-1],[-1,-1,-1]])
 
-        G&S example 3.4:
-        A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
-        [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
-        sage:  M_alpha_posdef(A)
-        Associated matrix Positive Definite
-        (
-        [  1.00000000000000 -0.100000000000000 -0.357142857142857 -0.136363636363636]
-        [-0.100000000000000   1.00000000000000 -0.157142857142857 -0.463636363636364]
-        [-0.357142857142857 -0.157142857142857   1.00000000000000 -0.259740259740260]
-        [-0.136363636363636 -0.463636363636364 -0.259740259740260   1.00000000000000], [1.48166302370710, 1.35710044711659, 0.908677071254836, 0.252559457921473]
-        )
+    G&S example 3.4:
+    A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+    [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
+    sage:  M_alpha_posdef(A)
+    Associated matrix Positive Definite
+    (
+    [  1.00000000000000 -0.100000000000000 -0.357142857142857 -0.136363636363636]
+    [-0.100000000000000   1.00000000000000 -0.157142857142857 -0.463636363636364]
+    [-0.357142857142857 -0.157142857142857   1.00000000000000 -0.259740259740260]
+    [-0.136363636363636 -0.463636363636364 -0.259740259740260   1.00000000000000], [1.48166302370710, 1.35710044711659, 0.908677071254836, 0.252559457921473]
+    )
     """
-    import logging
     A = normalize_rows(v)
     n = A.nrows()
     M_0 = matrix(n, lambda i,j:-abs(A[i]*A[j])); M_0
@@ -334,11 +262,6 @@ def M_alpha_posdef(v):
         print("Associated matrix NOT positive definite")
     else:
         print("Associated matrix Positive Definite")
-
-#import warnings
-    #warnings.filterwarnings("ignore")
-
-#try logging.disable(logging.WARN) in doctest only
 
    
 
