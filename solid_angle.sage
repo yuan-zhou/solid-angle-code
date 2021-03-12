@@ -226,7 +226,7 @@ def solid_angle_simplicial_arctan_3d(A):
     dbc = b.dot_product(c)
     denom = 1+dab+dac+dbc
     omega = 2*atan2(det, denom)
-    return (omega/(4*pi)).n()
+    return RDF(omega/(4*pi))
 
 
 # **********************************************************
