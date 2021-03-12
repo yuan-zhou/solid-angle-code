@@ -253,15 +253,15 @@ def solid_angle_2d(A):
         sage: logging.disable(logging.WARNING)
         sage: A = matrix([[2,3],[-3,-7]])
         sage: solid_angle_2d(A)
-        0.470857008299079
+        0.4708570082990789
 
         sage: A = matrix([[1,0],[0,1],[-1,0]])
         sage: solid_angle_2d(A)
-        0.500000000000000
+        0.5
 
         sage: A = matrix([[1,1],[1,2],[-1,1],[-3,0]])
         sage: solid_angle_2d(A)
-        0.375000000000000
+        0.3750000000000001
 
 
     This example illustrates how the solid angle measure can equal 1. That is,
