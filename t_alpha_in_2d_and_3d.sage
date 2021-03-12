@@ -174,25 +174,26 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
                         s_i = 0
                         for j in range(d):
                             if j != i:
-                                m = max(i, j)
-                                l = min(i, j)
-                                k = (2*d-l-1)*l/2+m-l-1
+                                m_1 = max(i, j)
+                                m_0 = min(i, j)
+                                k = (2*d-m_0-1)*m_0/2+m_1-m_0-1
                                 s_i += a[k]
                         coef = coef * gamma(0.5*(s_i+1))
-                    sum_deg_n  += coef * alphatoa
+                    sum_deg_n += coef * alphatoa
                 partial_sum += sum_deg_n
                 if abs(const * sum_deg_n) < eps:
                     break
-            return (const * (partial_sum)).n()
+            return RDF(const * (partial_sum))
     else:
-        A_list = simplicial_subcones_decomposition(M)
+        A_list = simplicial_subcones_decomposition(A)
         n = len(A_list)
         results = []
         for i in range(n):
             results.append(
-                T_alpha(A_list[i], deg=deg, simplicial=True))
-        logging.info(results)
+                solid_angle_general(A_list[i], deg=deg, simplicial=True))
+        logging.info("Solid angle(s) of cones in Decomposition: %s" % results)
         return sum(results)
+
 
 def normalize_rows(A):
     r"""
