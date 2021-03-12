@@ -92,34 +92,35 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
     notes). For the matrix [[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
     [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]], the authors used
     truncated forms of Ribando's formula, testing deg = 0,1,2,5,,10,20, and
-    40. The estimates they obtained were 0.097403, 0.067204, 0.082871, 0.079939,
-    0.080930, 0.080878, and 0.080878 respectively. The authors normalized their
-    measurment with respect to a half space. Thus, the function should return
-    estimates that are half of the above values. Below, we show that this is
-    the case.::
+    40. The estimates they obtained were 0.097403, 0.067204, 0.082871,
+    0.079939, 0.080930, 0.080878, and 0.080878 respectively. The authors
+    normalized their measurement with respect to a half space. Thus, the
+    function should return estimates that are half of the above values.
+    Below, we show that this is the case.::
 
+        sage: logging.disable(logging.INFO)
         sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
         ....:     [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]])
-        sage: T_alpha(A, deg=0)
-        0.0487012987012987
+        sage: solid_angle_general(A, deg=0)
+        0.04870129870129871
 
-        sage: T_alpha(A, deg=1)
-        0.0336018459286235
+        sage: solid_angle_general(A, deg=1)
+        0.03360184592862353
 
-        sage: T_alpha(A, deg=2)
-        0.0431921854297129
+        sage: solid_angle_general(A, deg=2)
+        0.04319218542971285
 
-        sage: T_alpha(A, deg=5)
-        0.0399696621189179
+        sage: solid_angle_general(A, deg=5)
+        0.03996966211891789
 
-        sage: T_alpha(A, deg=10)
+        sage: solid_angle_general(A, deg=10)
         0.0404638509737549
 
-        sage: T_alpha(A, deg=20)
-        0.0404392494100771
+        sage: solid_angle_general(A, deg=20)
+        0.04043924941007705
 
-        sage: T_alpha(A, deg=40)
-        0.0404392494100771
+        sage: solid_angle_general(A, deg=40)
+        0.04043924941007705
 
     .. NOTE::
 
