@@ -53,26 +53,38 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
     is 0.0118307689352399.::
 
         sage: A = matrix([[2,sqrt(2), 3],[-1,1, 2],[-3,0,1.25]])
-        sage: T_alpha(A, deg=20)
-        0.0118828698270103
+        sage: solid_angle_general(A, deg=20)
+        0.011882869827010274
 
     This example shows an estimation of the measure of the solid angle
     spanned by vectors R^5, with different deg values.::
 
+        sage: A=matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:          [0,0,-2,1,4],[0,0,0,0,1]])
+        sage: solid_angle_general(A, deg=10)
+        0.005330879073359687
+
+        sage: solid_angle_general(A, deg=12)
+        0.004870472360500354
+
+    This example demonstrates that solid_angle_general works even
+    when the input is a matrix that does not correspond to a simplicial
+    cone. The expected result (based on the solid_angle_3d function)
+    is 0.301208191174783::
+
+        sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
+        sage: solid_angle_general(A)
+        0.3012056062147818
+
+    This example illustrates that when the input matrix has an
+    associated matrix that is not positive definite, a warning appears::
+
         sage: A = matrix([[1,2,-1,2,0],[-3,0,0,0,2],[1,-2,-0.4,0,0],
         ....:            [0,0,0,-2,1],[-1,-1,0,-1,0]])
-        sage: T_alpha(A, deg=10)
-        0.0401110745049663
-
-        sage: T_alpha(A, deg=12)
-        0.0434187223547473
-
-    This example demonstrates that T_alpha works even when the input is
-    a matrix that does not correspond to a simplicial cone. The expected
-    result (based on the solid_angle_3d function) is 0.301208191174783::
-        sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
-        sage: T_alpha(A)
-        0.301205606214782
+        sage: solid_angle_general(A, deg=10)
+        WARNING: Associated matrix NOT positive definite,
+            series does not converge
+        0.04011107450496622
 
     TESTS:
 
