@@ -49,13 +49,13 @@ def solid_angle_simplicial_2d(A):
     antiparallel, parallel and perpendicular, respectively.
 
         sage: solid_angle_simplicial_2d(matrix([[1,1],[-1,-1]]))
-        0.500000000000000
+        0.5
 
         sage: solid_angle_simplicial_2d(matrix([[1,2],[2,4]]))
-        0.000000000000000
+        0.0
 
         sage: solid_angle_simplicial_2d(matrix([[2,2],[-1,1]]))
-        0.250000000000000
+        0.25
     """
     if not hasattr(A, 'nrows'):
         A = matrix(A)
