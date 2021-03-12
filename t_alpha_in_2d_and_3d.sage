@@ -36,15 +36,15 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
 
         sage: logging.disable(logging.INFO)
         sage: A = matrix([[1,0],[-1,-1]])
-        sage: T_alpha(A)
-        0.374998211389711
+        sage: solid_angle_general(A)
+        0.37499821138971134
 
     This example shows that when the vectors are linearly
     dependent, the measure of the solid angle is 0::
 
         sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
-        sage: T_alpha(A)
-        determinant is 0
+        sage: solid_angle_general(A)
+        WARNING: cone(s) not full-dimensional
         0
 
     This example shows the measure of the solid angle spanned by
