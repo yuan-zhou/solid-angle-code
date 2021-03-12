@@ -9,12 +9,12 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
 
     INPUT:
 
-    - ``M`` -- matrix; M is a matrix which should be input as
+    - ``A`` -- matrix; A is a matrix which should be input as
       A=matrix([[a,...,b],[c,...,d],...,[e,...,f]]) where [a,...,b],
       [c,...,d],..., and [e,...,f] represent the extreme rays/vectors of
       a cone.
 
-    - ``eps`` -- positve real number (default: `1e-6`); this parameter
+    - ``eps`` -- positive real number (default: `1e-6`); this parameter
       is used to determine when the summation stops. In terms of the partial
       sum, when s_n-s_(n-1) < eps, we stop adding terms to the partial sum
       sequence.
