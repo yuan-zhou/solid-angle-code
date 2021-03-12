@@ -68,7 +68,7 @@ def solid_angle_simplicial_2d(A):
     b = v.norm()
     cs = p/(a*b)
     final_calc = arccos(cs) / (2*pi)
-    return final_calc.numerical_approx()
+    return RDF(final_calc)
 
 
 def solid_angle_simplicial_arccos_3d(A):
