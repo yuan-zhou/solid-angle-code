@@ -320,29 +320,29 @@ def solid_angle_3d(A, method="arctan"):
         sage: logging.disable(logging.WARNING)
         sage: A = matrix([[1,0,2],[-1,3,1],[1,0,-1]])
         sage: solid_angle_3d(A)
-        0.181768746434821
+        0.1817687464348209
 
         sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
         sage: solid_angle_3d(A)
-        0.301208191174783
+        0.30120819117478337
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
         sage: solid_angle_3d(A)
-        0.375000000000000
+        0.3750000000000001
 
     This example illustrates how using the arcos method instead of the
     default atan method gives the same result::
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
         sage: solid_angle_3d(A, method="arccos")
-        0.375000000000000
+        0.37499999999999994
 
     This example illustrates how the solid angle measure can equal 1. That is,
     the span of the rays is all of space::
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,1],[0,0,-1],[0,-1,0]])
         sage: solid_angle_3d(A)
-        1.00000000000000
+        1.0
 
     Check corner case where the where cones have affine dimension less than 3::
 
