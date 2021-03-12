@@ -22,23 +22,23 @@ def solid_angle_simplicial_2d(A):
     This example shows the solid angle spanned by the vectors [0,1] and [1,0]::
 
         sage: solid_angle_simplicial_2d(matrix([[0,1],[1,0]]))
-        0.250000000000000
+        0.25
 
     The input can be a list of vectors instead of a matrix::
 
         sage: solid_angle_simplicial_2d([[0,1],[1,0]])
-        0.250000000000000
+        0.25
 
     We now show the solid angle spanned by the vectors [1,0], [-1, sqrt(3)]::
 
         sage: solid_angle_simplicial_2d(matrix([[1,0],[-1,sqrt(3)]]))
-        0.333333333333333
+        0.3333333333333333
 
     This example illustrates how the solid angle measure will not greater than
     0.5 as the function always outputs the minimal angle between the two rays::
 
         sage: solid_angle_simplicial_2d(matrix([[1,0],[-1,-1]]))
-        0.375000000000000
+        0.375
 
     .. NOTE::
 
