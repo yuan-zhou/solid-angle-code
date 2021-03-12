@@ -219,70 +219,99 @@ def normalize_rows(A):
 
         sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
         sage: normalize_rows(A)
-        [  1.00000000000000  0.000000000000000  0.000000000000000]
-        [ 0.000000000000000   1.00000000000000  0.000000000000000]
-        [-0.707106781186547 -0.707106781186547  0.000000000000000]
+        [                1.0                 0.0                 0.0]
+        [                0.0                 1.0                 0.0]
+        [-0.7071067811865476 -0.7071067811865476                 0.0]
 
     This example illustrates how the matrix that is returned
     will have entries that are approximations::
 
         sage: A = matrix([[-2,sqrt(2), 3],[-1,1, 2],[-3,0,-1.25]])
         sage: normalize_rows(A)
-        [-0.516397779494322  0.365148371670111  0.774596669241483]
-        [-0.408248290463863  0.408248290463863  0.816496580927726]
-        [-0.923076923076923  0.000000000000000 -0.384615384615385]
+        [ -0.5163977794943222   0.3651483716701107   0.7745966692414834]
+        [ -0.4082482904638631   0.4082482904638631   0.8164965809277261]
+        [ -0.9230769230769231                  0.0 -0.38461538461538464]
 
     This example shows the matrix with normalized row vectors coming
     from a matrix in R^4::
 
-        sage: A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],[-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])                       
+        sage: A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
         sage: normalize_rows(A)
-        [ 0.500000000000000 -0.500000000000000 -0.500000000000000  0.500000000000000]
-        [ 0.500000000000000  0.100000000000000  0.700000000000000  0.500000000000000]
-        [-0.571428571428571  0.571428571428571  0.142857142857143  0.571428571428571]
-        [-0.363636363636364 -0.454545454545455  0.727272727272727  0.363636363636364]
+        [                 0.5                 -0.5                 -0.5
+                          0.5]
+        [                 0.5                  0.1                  0.7
+                          0.5]
+        [ -0.5714285714285714   0.5714285714285714  0.14285714285714285
+           0.5714285714285714]
+        [-0.36363636363636365 -0.45454545454545453   0.7272727272727273
+          0.36363636363636365]
     """
     m = A.nrows()
-    vnorm = [A[i].norm().n() for i in range(m)]
-    M = matrix(m, lambda i,j:A[i,j].n() / (vnorm[i])); M
-    return M
+    vnorm = [RDF(A[i].norm()) for i in range(m)]
+    B = matrix(m, lambda i, j: RDF(A[i, j]) / (vnorm[i]))
+    return B
 
 
-def M_alpha_posdef(v):
+def M_alpha_posdef(A):
     r"""
-    Dr. Zhou's examples:
-    v = matrix([[1,0,1],[0,1,1],[0,0,1]]) 
-    v = matrix([[1,0,1],[0,1,1],[0,0,-1]])
-    More:
-    v=matrix([[1,-1,0],[2,1,1],[-1,0,0]])
-    v=matrix([[-1,-1,0],[0,-1,-1],[-1,-1,-1]])
-    v=matrix([[-1,-1,0],[0,-0.5,-1],[-1,-1,-1]])
+    Return a statement as to whether the associated matrix to v,
+    M(1, -|v[i]*v[j]|) is positive definite or not. Here, * represents
+    the dot product.
 
-    G&S example 3.4:
-    A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
-    [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
-    sage:  M_alpha_posdef(A)
-    Associated matrix Positive Definite
-    (
-    [  1.00000000000000 -0.100000000000000 -0.357142857142857 -0.136363636363636]
-    [-0.100000000000000   1.00000000000000 -0.157142857142857 -0.463636363636364]
-    [-0.357142857142857 -0.157142857142857   1.00000000000000 -0.259740259740260]
-    [-0.136363636363636 -0.463636363636364 -0.259740259740260   1.00000000000000], [1.48166302370710, 1.35710044711659, 0.908677071254836, 0.252559457921473]
-    )
+    INPUT:
+
+    - ``v`` -- a square matrix whose row vectors span a simplicial cone.
+    The matrix should be input as v = matrix([[a,...,b], [c,...,d],...,
+    [e,...,f]]).
+
+    OUTPUT: the function prints either "Associated matrix is NOT positive
+    definite" if the associated matrix, M(1, -|v[i]*v[j]|) is not positive
+    definite, and "Associated matrix is positive definite" if the associated
+    matrix is positive definite.
+
+    EXAMPLES:
+
+    This example shows that the associated matrix of [[1,-1,0],[2,1,1],
+    [-1,0,0]] is not positive definite.::
+
+        sage: A=matrix([[1,-1,0],[2,1,1],[-1,0,0]])
+        sage: M_alpha_posdef(A)
+        False
+
+    In this example, we use the matrix given in Example 3.4 of Gourion and
+    Seeger. The authors note that the associated matrix is positive definite.
+    We see that our output aligns with this result.::
+
+        sage: A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
+        sage: M_alpha_posdef(A)
+        True
+
+    The following examples illustrate that the function works in higher
+    dimensions::
+
+        sage: A=matrix([[1,2,3,4,5],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:   [0,0,-2,1,4],[0,0,0,0,1]])
+        sage: M_alpha_posdef(A)
+        False
+
+        sage: A=matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:   [0,0,-2,1,4],[0,0,0,0,1]])
+        sage: M_alpha_posdef(A)
+        True
+
+    .. NOTE::
+
+        This function is used as a test for the convergence of
+        Ribando's power series for the solid angle of a cone. By
+        Corollary 3.2 in Ribando's paper "Measuring solid angles
+        beyond dimension three," the series converges if and only if
+        the associated matrix is positive definite.
     """
-    A = normalize_rows(v)
-    n = A.nrows()
-    M_0 = matrix(n, lambda i,j:-abs(A[i]*A[j])); M_0
-    M = M_0 + 2*identity_matrix(M_0.nrows())
-    logging.info(M)
-    spectrum = M.eigenvalues()
-    logging.info(spectrum)
-    is_neg = any(x < 0 for x in spectrum)
-    if is_neg:
-        print("Associated matrix NOT positive definite")
-    else:
-        print("Associated matrix Positive Definite")
-
-   
-
-
+    B = normalize_rows(A)
+    n = B.nrows()
+    M_0 = matrix(n, lambda i, j: -abs(B[i]*B[j]))
+    M = M_0 + 2*identity_matrix(n)
+    logging.info("Associated Matrix: %s" % M)
+    return M.is_positive_definite()
