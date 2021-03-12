@@ -269,7 +269,7 @@ def solid_angle_2d(A):
 
         sage: A = matrix([[1,1],[0,-1],[-1,-1],[-3,0]])
         sage: solid_angle_2d(A)
-        1.00000000000000
+        1.0
 
     Check corner case where the where cones have affine dimension less than 2::
 
