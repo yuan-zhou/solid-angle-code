@@ -94,19 +94,19 @@ def solid_angle_simplicial_arccos_3d(A):
 
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
         sage: solid_angle_simplicial_arccos_3d(A)
-        0.125000000000000
+        0.125
 
     The input can be a list of vectors instead of a matrix::
 
         sage: solid_angle_simplicial_arccos_3d([[0,0,3],[-1,-1,0],[-2,2,0]])
-        0.125000000000000
+        0.125
 
     This example shows the solid angle of a cone in 3d with affine dimension 2.
     In contrast to ``solid_angle_3d``, this formula gives a non-zero angle::
 
         sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
         sage: solid_angle_simplicial_arccos_3d(A)
-        0.500000000000000
+        0.5
 
     It is an error to input a matrix A, which has two vectors
     that are scalar multiples of each other::
