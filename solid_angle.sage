@@ -138,19 +138,19 @@ def solid_angle_simplicial_arccos_3d(A):
     c_01 = v_0.cross_product(v_1)
     c_02 = v_0.cross_product(v_2)
     c_12 = v_1.cross_product(v_2)
-    n_01 = c_01.norm().n()
-    n_02 = c_02.norm().n()
-    n_12 = c_12.norm().n()
+    n_01 = RDF(c_01.norm())
+    n_02 = RDF(c_02.norm())
+    n_12 = RDF(c_12.norm())
     d_0 = c_01.dot_product(c_02)
     d_1 = c_01.dot_product(c_12)
     d_2 = c_02.dot_product(c_12)
-    a_0 = arccos(d_0/(n_01*n_02)).n()
-    a_1 = arccos(-d_1/(n_01*n_12)).n()
-    a_2 = arccos(d_2/(n_02*n_12)).n()
+    a_0 = RDF(arccos(d_0/(n_01*n_02)))
+    a_1 = RDF(arccos(-d_1/(n_01*n_12)))
+    a_2 = RDF(arccos(d_2/(n_02*n_12)))
     sum = a_0+a_1+a_2
-    denom = (4*pi).n()
+    denom = RDF((4*pi))
     omega = (sum-pi)/denom
-    return (omega).n()
+    return RDF(omega)
 
 
 def solid_angle_simplicial_arctan_3d(A):
