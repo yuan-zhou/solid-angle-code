@@ -26,7 +26,7 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
     OUTPUT:
 
     - an estimate of the normalized solid angle measure spanned by the
-      the vectors given in M.
+      the vectors given in A.
 
     EXAMPLES:
 
