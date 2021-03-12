@@ -137,14 +137,20 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
         to a half space. See Theorem 4.1 and Remark 4.2.
     """
     if simplicial is True:
-        if M.det() == 0:
-            print("determinant is 0")
+        if A.nrows() != len(A[0]):
+            return 0
+        if A.det() == 0:
+            logging.info("determinant is 0")
             return 0
         else:
-            v = normalize_rows(M)
+            t = M_alpha_posdef(A)
+            if t is False:
+                logging.warning("Associated matrix NOT positive definite,\
+    series does not converge")
+            v = normalize_rows(A)
             d = v.nrows()
             da = int(d*(d-1)/2)
-            const = abs(v.determinant().n()) / ((4*pi.n()) ** (d/2))
+            const = abs(RDF(v.determinant()) / ((RDF(4*pi) ** (d/2))))
             alpha = [0]*da
             for i in range(d-1):
                 for j in range(i+1, d):
