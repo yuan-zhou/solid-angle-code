@@ -128,8 +128,7 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
         2006 paper entitled "Measuring Solid Angles Beyond
         Dimension Three." More specifically, it is a truncated
         form of the multi-variate power series given in Theorem
-        2.2. The function is a modified version of Dr. Zhou's
-        function solid_angle_by_convergent_series.
+        2.2.
 
         In Gourion and Seeger's 2010 paper entitled "Deterministic
         and stochastic methods for computing volumetric moduli of
