@@ -1,6 +1,7 @@
-load("solid_angle.sage")
+load("~/ma611-code/solid_angle.sage")
 
-def T_alpha(M, eps=1e-6, deg=100, simplicial=None):
+
+def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
     r"""
     Return an estimate of the normalized solid angle measure of the
     simplicial solid angle spanned by vectors given by the rows of v,
