@@ -327,14 +327,14 @@ def solid_angle_3d(A, method="arctan"):
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
         sage: solid_angle_3d(A)
-        0.3750000000000001
+        0.37499999999999994
 
     This example illustrates how using the arcos method instead of the
     default atan method gives the same result::
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
         sage: solid_angle_3d(A, method="arccos")
-        0.37499999999999994
+        0.375
 
     This example illustrates how the solid angle measure can equal 1. That is,
     the span of the rays is all of space::
