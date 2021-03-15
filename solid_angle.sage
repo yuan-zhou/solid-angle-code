@@ -783,3 +783,74 @@ def composition_of_n_into_k_parts(n, k):
         for i in range(n+1):
             for c in composition_of_n_into_k_parts(n-i, k-1):
                 yield [i]+c
+
+
+def M_alpha_posdef(A):
+    r"""
+    Return a statement as to whether the associated matrix to v,
+    M(1, -|v[i]*v[j]|) is positive definite or not. Here, * represents
+    the dot product.
+
+    INPUT:
+
+    - ``v`` -- a square matrix whose row vectors span a simplicial cone.
+    The matrix should be input as v = matrix([[a,...,b], [c,...,d],...,
+    [e,...,f]]).
+
+    OUTPUT: the function prints either "Associated matrix is NOT positive
+    definite" if the associated matrix, M(1, -|v[i]*v[j]|) is not positive
+    definite, and "Associated matrix is positive definite" if the associated
+    matrix is positive definite.
+
+    EXAMPLES:
+
+    This example shows that the associated matrix of [[1,-1,0],[2,1,1],
+    [-1,0,0]] is not positive definite.::
+
+        sage: logging.disable(logging.INFO)
+        sage: A = matrix([[1,-1,0],[2,1,1],[-1,0,0]])
+        sage: M_alpha_posdef(A)
+        False
+
+    In this example, we use the matrix given in Example 3.4 of Gourion and
+    Seeger. The authors note that the associated matrix is positive definite.
+    We see that our output aligns with this result.::
+
+        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
+        sage: M_alpha_posdef(A)
+        True
+
+    The following examples illustrate that the function works in higher
+    dimensions::
+
+        sage: A = matrix([[1,2,3,4,5],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:   [0,0,-2,1,4],[0,0,0,0,1]])
+        sage: M_alpha_posdef(A)
+        False
+
+        sage: A = matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:   [0,0,-2,1,4],[0,0,0,0,1]])
+        sage: M_alpha_posdef(A)
+        True
+
+    .. NOTE::
+
+        This function is used as a test for the convergence of
+        Ribando's power series for the solid angle of a cone. By
+        Corollary 3.2 in Ribando's paper "Measuring solid angles
+        beyond dimension three," the series converges if and only if
+        the associated matrix is positive definite.
+    """
+    B = normalize_rows(A)
+    n = B.nrows()
+    M = matrix(RDF, n)
+    for i in range(n):
+        for j in range(i, n):
+            if i != j:
+                M[i, j] = -abs(B[i]*B[j])
+                M[j, i] = M[i, j]
+            else:
+                M[i, j] = 1
+    logging.info("Associated Matrix: %s" % M)
+    return M.is_positive_definite()
