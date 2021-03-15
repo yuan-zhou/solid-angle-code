@@ -311,7 +311,13 @@ def M_alpha_posdef(A):
     """
     B = normalize_rows(A)
     n = B.nrows()
-    M_0 = matrix(n, lambda i, j: -abs(B[i]*B[j]))
-    M = M_0 + 2*identity_matrix(n)
+    M = matrix(RDF, n)
+    for i in range(n):
+        for j in range(i, n):
+            if i != j:
+                M[i, j] = -abs(B[i]*B[j])
+                M[j, i] = M[i, j]
+            else:
+                M[i, j] = 1
     logging.info("Associated Matrix: %s" % M)
     return M.is_positive_definite()
