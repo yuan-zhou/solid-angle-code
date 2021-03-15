@@ -235,7 +235,7 @@ def normalize_rows(A):
     This example shows the matrix with normalized row vectors coming
     from a matrix in R^4::
 
-        sage: A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
         ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
         sage: normalize_rows(A)
         [                 0.5                 -0.5                 -0.5
