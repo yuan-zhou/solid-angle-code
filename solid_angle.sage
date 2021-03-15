@@ -177,8 +177,7 @@ def solid_angle_simplicial_arctan_3d(A):
         sage: solid_angle_simplicial_arctan_3d(A)
         0.125
 
-    The input can be a list of vectors instead of a matrix. Note that the
-    expected value in the example below is 0.125::
+    The input can be a list of vectors instead of a matrix::
 
         sage: solid_angle_simplicial_arctan_3d([[0,0,3],[-1,-1,0],[-2,2,0]])
         0.125
@@ -428,8 +427,8 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
     This example shows an estimation of the measure of the solid angle
     spanned by vectors R^5, with different deg values.::
 
-        sage: A=matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
-        ....:          [0,0,-2,1,4],[0,0,0,0,1]])
+        sage: A = matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:            [0,0,-2,1,4],[0,0,0,0,1]])
         sage: solid_angle_general(A, deg=10)
         0.005330879073359687
 
