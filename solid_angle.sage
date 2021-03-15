@@ -214,7 +214,7 @@ def solid_angle_simplicial_arctan_3d(A):
         A = matrix(A)
     if A.nrows() != 3 or A.ncols() != 3:
         raise ValueError("input matrix has incorrect dimension.")
-    vnorm = [A[i].norm().n() for i in range(3)]
+    vnorm = [A[i].norm() for i in range(3)]
     a = A[0]/vnorm[0]
     b = A[1]/vnorm[1]
     c = A[2]/vnorm[2]
