@@ -181,7 +181,7 @@ def solid_angle_simplicial_arctan_3d(A):
     expected value in the example below is 0.125::
 
         sage: solid_angle_simplicial_arctan_3d([[0,0,3],[-1,-1,0],[-2,2,0]])
-        0.12499999999999999
+        0.125
 
     This example shows the solid angle of a cone in 3d with affine dimension 2.
     In contrast to ``solid_angle_3d``, this formula gives a non-zero angle::
