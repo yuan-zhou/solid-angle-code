@@ -291,12 +291,12 @@ def M_alpha_posdef(A):
     The following examples illustrate that the function works in higher
     dimensions::
 
-        sage: A=matrix([[1,2,3,4,5],[-1,3,0,-4,1],[5,0,0,-1,0],
+        sage: A = matrix([[1,2,3,4,5],[-1,3,0,-4,1],[5,0,0,-1,0],
         ....:   [0,0,-2,1,4],[0,0,0,0,1]])
         sage: M_alpha_posdef(A)
         False
 
-        sage: A=matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
+        sage: A = matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
         ....:   [0,0,-2,1,4],[0,0,0,0,1]])
         sage: M_alpha_posdef(A)
         True
