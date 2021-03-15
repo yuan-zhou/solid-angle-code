@@ -113,7 +113,9 @@ def solid_angle_simplicial_arccos_3d(A):
 
         sage: A = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
         sage: solid_angle_simplicial_arccos_3d(A)
-        NaN
+        Traceback (most recent call last):
+        ...
+        ZeroDivisionError: rational division by zero
 
     It is an error to input vectors from R^2 into this function::
 
