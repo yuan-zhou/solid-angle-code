@@ -667,6 +667,64 @@ def simplicial_subcones_decomposition(A):
         return matrices
 
 
+def normalize_rows(A):
+    r"""
+    Return a matrix whose row vectors are the normalized row vectors
+    of the matrix A.
+
+    INPUT:
+
+    - ``A`` -- matrix; A is a matrix which should be input as
+      A=matrix([[a,...,b],[c,...,d],...,[e,...,f]]).
+
+    OUTPUT:
+
+    - a matrix whose rows are unit vectors. The vectors are the
+    normalized row vectors of A. The entries in the matrix are
+    given as approximations.
+
+    EXAMPLES:
+
+    This example shows the matrix whose rows are in the same
+    direction as the corresponding row vectors of A, but have
+    length 1::
+
+        sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
+        sage: normalize_rows(A)
+        [                1.0                 0.0                 0.0]
+        [                0.0                 1.0                 0.0]
+        [-0.7071067811865476 -0.7071067811865476                 0.0]
+
+    This example illustrates how the matrix that is returned
+    will have entries that are approximations::
+
+        sage: A = matrix([[-2,sqrt(2), 3],[-1,1, 2],[-3,0,-1.25]])
+        sage: normalize_rows(A)
+        [ -0.5163977794943222   0.3651483716701107   0.7745966692414834]
+        [ -0.4082482904638631   0.4082482904638631   0.8164965809277261]
+        [ -0.9230769230769231                  0.0 -0.38461538461538464]
+
+    This example shows the matrix with normalized row vectors coming
+    from a matrix in R^4::
+
+        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
+        sage: normalize_rows(A)
+        [                 0.5                 -0.5                 -0.5
+                          0.5]
+        [                 0.5                  0.1                  0.7
+                          0.5]
+        [ -0.5714285714285714   0.5714285714285714  0.14285714285714285
+           0.5714285714285714]
+        [-0.36363636363636365 -0.45454545454545453   0.7272727272727273
+          0.36363636363636365]
+    """
+    m = A.nrows()
+    vnorm = [RDF(A[i].norm()) for i in range(m)]
+    B = matrix(m, lambda i, j: RDF(A[i, j]) / (vnorm[i]))
+    return B
+
+
 def composition_of_n_into_k_parts(n, k):
     r"""
     Return a generator of the weak integer compositions of n into k parts.
