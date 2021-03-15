@@ -1,5 +1,5 @@
 def solid_angle(v, eps=1e-6, deg=100, normalized=True, tridiag=True):
-    """
+    r"""
     stops adding if total deg > given deg or if abs(sum of terms of current deg)<eps.
 
     sage: v = matrix([[1,0],[0,1]])
@@ -156,7 +156,7 @@ def solid_angle_simplicial_cone(v, eps=1e-6, deg=100, normalized=True,tridiag=Tr
     d = v.nrows()
     for i in range(d):
         for j in range(d):
-            if i <> j:
+            if i != j:
                 M[i,j] = - abs(M[i,j])
     if (not tridiag) and M.is_positive_definite():
         return product(solid_angle_by_convergent_series(orth_m, eps, deg, normalized,tridiag)
@@ -179,7 +179,7 @@ def solid_angle_simplicial_cone(v, eps=1e-6, deg=100, normalized=True,tridiag=Tr
     return answer
 
 def solid_angle_by_convergent_series(v, eps=1e-6, deg=100, normalized=True, tridiag=False):
-    """    
+    r"""
     # Example 3.4 from 2010-Gourion-Seeger-Deterministic and stochastic methods
     sage: v = matrix([[1,-1,-1,1],[5,1,7,5],[-4,4,1,4],[-4,-5,8,4]])
     sage: solid_angle_by_convergent_series(v, deg=10)
@@ -264,7 +264,7 @@ def composition_of_n_into_k_parts(n, k):
                 yield [i]+c
 
 def check_sign_consistency(v):
-    """
+    r"""
     input matrix v, whose rows are v[0], ..., v[n-1].
     Mn(v)_{i,j} =  -|vi \cdot vj| for i \neq j, and = vi\cdot vj if i=j.
     Check if Mn(v) be written as (v')^T * (v'),
@@ -292,7 +292,7 @@ def check_sign_consistency(v):
     return True
         
 def generate_cones_decomposition(v, h=None, w=None, s=1, tridiag=True):
-    """
+    r"""
     # Example 3.4 from 2010-Gourion-Seeger-Deterministic and stochastic methods
     sage: v = matrix([[1,-1,-1,1],[5,1,7,5],[-4,4,1,4],[-4,-5,8,4]])
     sage: list(generate_cones_decomposition(v, tridiag=False))
@@ -439,7 +439,7 @@ def generate_cones_decomposition(v, h=None, w=None, s=1, tridiag=True):
 
 
 def solid_angle_3d(v, normalized=True):
-    """
+    r"""
     sage: v = matrix([[1,0,1],[0,1,1],[0,0,1]])
     sage: solid_angle_3d(v)
     0.0270433619923482
@@ -456,7 +456,7 @@ def solid_angle_3d(v, normalized=True):
         return (angle).n()
 
 def generate_orthogonal_parts(v):
-    """
+    r"""
     sage: v = matrix([[1,0,0],[0,1,0],[0,0,1]])
     sage: list(generate_orthogonal_parts(v))
     [[1 0 0], [0 1 0], [0 0 1]]
@@ -473,7 +473,7 @@ def generate_orthogonal_parts(v):
     while k < len(u_indice_list):
         i = u_indice_list[k]
         for j in range(n):
-            if (j in w_indice_set) and (v[i]*v[j] <> 0):
+            if (j in w_indice_set) and (v[i]*v[j] != 0):
                 u_indice_list.append(j)
                 w_indice_set.remove(j)
         k += 1
@@ -486,7 +486,7 @@ def generate_orthogonal_parts(v):
 
 
 def smallest_eigenvalue_of_M(v):
-    """
+    r"""
     sage: u = 0.01
     sage: v = matrix([[1,1,0],[1,0,1],[u,sqrt((1-u^2)/2),sqrt((1-u^2)/2)]])
     sage: smallest_eigenvalue_of_M(v)
@@ -510,7 +510,7 @@ def smallest_eigenvalue_of_M(v):
     diag = [sqrt(x) for x in M.diagonal()]
     for i in range(d):
         for j in range(d):
-            if i <> j:
+            if i != j:
                 M[i,j] = - abs(M[i,j])/ (diag[i] * diag[j])
             else:
                 M[i,j] = 1
