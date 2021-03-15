@@ -275,7 +275,7 @@ def M_alpha_posdef(A):
     This example shows that the associated matrix of [[1,-1,0],[2,1,1],
     [-1,0,0]] is not positive definite.::
 
-        sage: A=matrix([[1,-1,0],[2,1,1],[-1,0,0]])
+        sage: A = matrix([[1,-1,0],[2,1,1],[-1,0,0]])
         sage: M_alpha_posdef(A)
         False
 
