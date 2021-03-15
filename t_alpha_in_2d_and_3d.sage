@@ -283,7 +283,7 @@ def M_alpha_posdef(A):
     Seeger. The authors note that the associated matrix is positive definite.
     We see that our output aligns with this result.::
 
-        sage: A=matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
         ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
         sage: M_alpha_posdef(A)
         True
