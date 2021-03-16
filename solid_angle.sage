@@ -508,6 +508,8 @@ def solid_angle_general(A, eps=1e-6, deg=100,
         normalized volume of convex polyhedral cones, in comparison
         to a half space. See Theorem 4.1 and Remark 4.2.
     """
+    if not hasattr(A, 'nrows'):
+        A = matrix(A)
     if simplicial is True:
         if A.nrows() != len(A[0]):
             return 0
@@ -515,54 +517,55 @@ def solid_angle_general(A, eps=1e-6, deg=100,
             logging.info("determinant is 0")
             return 0
         else:
-            t = M_alpha_posdef(A)
+            t = is_M_alpha_posdef(A)
             if t is False:
                 logging.warning("Associated matrix NOT positive definite, "
                                 "series NOT converge")
             v = normalize_rows(A)
             d = v.nrows()
-            da = int(d*(d-1)/2)
-            const = abs(RDF(v.determinant()) / ((RDF(4*pi) ** (d/2))))
-            alpha = [0]*da
-            for i in range(d-1):
-                for j in range(i+1, d):
-                    k = (2*d-i-1)*i/2 + j-i-1
+            da = int(d * (d-1) / 2)
+            const = abs(v.determinant()) / (RDF(4*pi) ** (d/2))
+            alpha = [0] * da
+            for i in range(d - 1):
+                for j in range(i + 1, d):
+                    k = (2*d - i - 1) * i/2 + j - i - 1
                     alpha[k] = v[i] * v[j]
             partial_sum = 0
-            for n in range(deg+1):
+            for n in range(deg + 1):
                 sum_deg_n = 0
                 for a in composition_of_n_into_k_parts(n, da):
                     alphatoa = 1
                     for k in range(da):
-                        alphatoa = alpha[k]**a[k] * alphatoa
+                        alphatoa = alpha[k] ** a[k] * alphatoa
                         if alphatoa == 0:
                             break
                     if alphatoa == 0:
                         continue
-                    t = (-2)**(sum(a))
+                    t = (-2) ** (sum(a))
                     fact_denom = prod([factorial(a[k]) for k in range(da)])
-                    coef = t/fact_denom
+                    coef = t / fact_denom
                     for i in range(d):
                         s_i = 0
                         for j in range(d):
                             if j != i:
                                 m_1 = max(i, j)
                                 m_0 = min(i, j)
-                                k = (2*d-m_0-1)*m_0/2+m_1-m_0-1
+                                k = (2*d - m_0 - 1) * m_0 / 2 + m_1 - m_0 - 1
                                 s_i += a[k]
-                        coef = coef * gamma(0.5*(s_i+1))
+                        coef = coef * gamma(0.5 * (s_i + 1))
                     sum_deg_n += coef * alphatoa
                 partial_sum += sum_deg_n
                 if abs(const * sum_deg_n) < eps:
                     break
-            return RDF(const * (partial_sum))
+            return const * (partial_sum)
     else:
         A_list = simplicial_subcones_decomposition(A)
         n = len(A_list)
         results = []
         for i in range(n):
             results.append(
-                solid_angle_general(A_list[i], deg=deg, simplicial=True))
+                solid_angle_general(A_list[i], eps=eps, deg=deg,
+                                    simplicial=True, space=space))
         logging.info("Solid angle(s) of cones in Decomposition: %s" % results)
         return sum(results)
 
