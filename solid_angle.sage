@@ -365,6 +365,9 @@ def solid_angle_3d(A, method="arctan"):
     return sum(results)
 
 
+# **********************************************************
+#      Main function of solid angle in higher dimensions
+# **********************************************************
 def solid_angle_general(A, eps=1e-6, deg=100,
                         simplicial=None, space="ambient"):
     r"""
