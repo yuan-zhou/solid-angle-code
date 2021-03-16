@@ -7,30 +7,24 @@ load("~/ma611-code/logging.sage")
 def solid_angle_simplicial_2d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by the
-    vectors given by the two rows of A.
+    vectors given by the two rows of ``A``.
 
     INPUT:
 
-    - ``A`` -- 2x2 matrix in the form of matrix([[a,b],[c,d]]) or
-      simply [[a,b],[c,d]], where [a,b] and [c,d] represent the two extreme
-      rays/vectors of the cone in R^2. The vectors should be nonzero.
+    - ``A`` -- 2x2 matrix in the form of ``matrix([[a,b],[c,d]])`` or
+      simply ``[[a,b],[c,d]]``, where the nonzero ``[a,b]`` and ``[c,d]``
+      represent the two extreme rays/vectors of the cone in `\RR^2`.
 
     OUTPUT: the solid angle spanned by the two vectors, as a decimal
 
     EXAMPLES:
 
-    This example shows the solid angle spanned by the vectors [0,1] and [1,0]::
+    This example shows the solid angle spanned by the rows of the matrix::
 
         sage: solid_angle_simplicial_2d(matrix([[0,1],[1,0]])) # abs tol 1e-15
         0.25
 
-    The input can be a list of vectors instead of a matrix::
-
-        sage: solid_angle_simplicial_2d([[0,1],[1,0]])         # abs tol 1e-15
-        0.25
-
-    We now show the solid angle spanned by the vectors [1,0], [-1, sqrt(3)]::
-
+The input can be a list of vectors instead of a matrix as well::
         sage: solid_angle_simplicial_2d([[1,0], [-1,sqrt(3)]]) # abs tol 1e-15
         0.3333333333333333
 
@@ -46,7 +40,7 @@ def solid_angle_simplicial_2d(A):
         angle between them.
 
     The following tests check for corner cases where the vectors are
-    antiparallel, parallel and perpendicular, respectively.
+    antiparallel, parallel and perpendicular, respectively::
 
         sage: solid_angle_simplicial_2d([[1,1],[-1,-1]])       # abs tol 1e-15
         0.5
@@ -74,12 +68,12 @@ def solid_angle_simplicial_2d(A):
 def solid_angle_simplicial_arccos_3d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
-    three vectors given by the rows of A.
+    three vectors given by the rows of ``A``.
 
     INPUT:
 
-    - ``A`` -- 3x3 matrix or a list of three vectors in R^3 where the row
-      vectors represent the three extreme rays/vectors of the cone in R^3.
+    - ``A`` -- 3x3 matrix or a list of three vectors in `\RR^3` where the row
+      vectors represent the three extreme rays/vectors of the cone in `\RR^3`.
       Any two vectors should not be scalar multiples of each other.
 
     OUTPUT:
@@ -89,8 +83,7 @@ def solid_angle_simplicial_arccos_3d(A):
 
     EXAMPLES:
 
-    This example shows the measure of the solid angle spanned by the vectors
-    [1,0,0], [0,1,0], and [0,0,1]::
+    This example shows the measure of the solid angle spanned by the vectors::
 
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
         sage: solid_angle_simplicial_arccos_3d(A)              # abs tol 1e-15
@@ -109,7 +102,7 @@ def solid_angle_simplicial_arccos_3d(A):
         sage: solid_angle_simplicial_arccos_3d(A)              # abs tol 1e-15
         0.5
 
-    It is an error to input a matrix A, which has two vectors
+    It is an error to input a matrix ``A``, which has two vectors
     that are scalar multiples of each other::
 
         sage: A = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
@@ -118,7 +111,7 @@ def solid_angle_simplicial_arccos_3d(A):
         ...
         ZeroDivisionError: rational division by zero
 
-    It is an error to input vectors from R^2 into this function::
+    It is an error to input vectors from `\RR^2` into this function::
 
         sage: solid_angle_simplicial_arccos_3d(A=matrix([[1,0],[3,4],[-1,2]]))
         Traceback (most recent call last):
@@ -156,12 +149,12 @@ def solid_angle_simplicial_arccos_3d(A):
 def solid_angle_simplicial_arctan_3d(A):
     r"""
     Return the normalized solid angle measure of the solid angle spanned by
-    three vectors given by the rows of v.
+    three vectors given by the rows of ``A``.
 
     INPUT:
 
-    - ``A`` -- 3x3 matrix or a list of three vectors in R^3 where the row
-      vectors represent the three extreme rays/vectors of the cone in R^3.
+    - ``A`` -- 3x3 matrix or a list of three vectors in `\RR^3` where the row
+      vectors represent the three extreme rays/vectors of the cone in `\RR^3`.
       Any two vectors should not be scalar multiples of each other.
 
     OUTPUT:
@@ -171,8 +164,7 @@ def solid_angle_simplicial_arctan_3d(A):
 
     EXAMPLES:
 
-    This example shows the measure of the solid angle spanned by the vectors
-    [1,0,0],[0,1,0], and [0,0,1]::
+    This example shows the measure of the solid angle spanned by the vectors::
 
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
         sage: solid_angle_simplicial_arctan_3d(A)              # abs tol 1e-15
@@ -191,13 +183,14 @@ def solid_angle_simplicial_arctan_3d(A):
         sage: solid_angle_simplicial_arctan_3d(A)              # abs tol 1e-15
         0.5
 
-    It is an error to input a matrix A where one row is a multiple of another::
+    It is an error to input a matrix ``A``, which has two vectors
+    that are scalar multiples of each other::
 
         sage: A = matrix([[-1,0,1],[3,0,0],[-1,0,0]])
         sage: solid_angle_simplicial_arctan_3d(A)
         NaN
 
-    It is an error to input vectors from R^2 into this function::
+    It is an error to input vectors from `\RR^2` into this function::
 
         sage: solid_angle_simplicial_arctan_3d(matrix([[1,0],[3,4],[-1,2]]))
         Traceback (most recent call last):
@@ -239,16 +232,16 @@ def solid_angle_2d(A):
 
     INPUT:
 
-    - ``A`` -- n by 2 matrix whose rows vectors span the cone in R^2 of which
-      we look for the solid angle. The input can be in the form of a matrix or
-      as a list of vectors in R^2.
+    - ``A`` -- ``n`` by 2 matrix whose rows vectors span the cone in `\RR^2` of
+      which we look for the solid angle. The input can be in the form of a
+      matrix or as a list of vectors in `\RR^2`.
 
     OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
 
     EXAMPLES:
 
     The following three examples show the solid angles spanned by the given
-    two, three or four vectors in R^2, respectively::
+    two, three or four vectors in `\RR^2`, respectively::
 
         sage: logging.disable(logging.WARNING)
         sage: A = matrix([[2,3],[-3,-7]])
@@ -264,14 +257,14 @@ def solid_angle_2d(A):
         0.375
 
 
-    This example illustrates how the solid angle measure can equal 1. That is,
-    the span of the rays is all of space::
+    This example illustrates how the solid angle measure can equal `1`.
+    That is, the span of the rays is all of space::
 
         sage: A = matrix([[1,1],[0,-1],[-1,-1],[-3,0]])
         sage: solid_angle_2d(A)                                # abs tol 1e-15
         1.0
 
-    Check corner case where the where cones have affine dimension less than 2::
+    Check examples where the where cones have affine dimension less than `2`::
 
         sage: A = matrix([[1,0],[2,0]])
         sage: solid_angle_2d(A)
@@ -300,22 +293,22 @@ def solid_angle_2d(A):
 def solid_angle_3d(A, method="arctan"):
     r"""
     Return the normalized solid angle measure of the solid angle spanned
-    by vectors in R^3.
+    by vectors in `\RR^3`.
 
     INPUT:
 
-    - ``A`` -- n by 3 matrix whose rows vectors span the cone in R^3 of which
-      we look for the solid angle. The input can be in the form of a matrix or
-      as a list of vectors in R^2.
+    - ``A`` -- ``n`` by 3 matrix whose rows vectors span the cone in `\RR^3`
+      of which we look for the solid angle. The input can be in the form of a
+      matrix or as a list of vectors in `\RR^2`.
 
-    - ``method`` -- (optional) Either ``arctan`` or ``arccos``
+    - ``method`` -- (optional) Either ``arctan`` or ``arccos``.
 
     OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
 
     EXAMPLES:
 
     The following three examples show the solid angles spanned by the given
-    three, four or five vectors in R^3, respectively::
+    three, four or five vectors in `\RR^3`, respectively::
 
         sage: logging.disable(logging.WARNING)
         sage: solid_angle_3d([[1,0,2],[-1,3,1],[1,0,-1]])      # abs tol 1e-15
@@ -370,125 +363,135 @@ def solid_angle_3d(A, method="arctan"):
     return sum(results)
 
 
-def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
+def solid_angle_general(A, eps=1e-6, deg=100,
+                        simplicial=None, space="ambient"):
     r"""
     Return an estimate of the normalized solid angle measure of the
-    simplicial solid angle spanned by vectors given by the rows of v,
+    simplicial solid angle spanned by vectors given by the rows of ``A``,
     based on a truncated form of Jason Ribando's formula(see note).
 
     INPUT:
 
-    - ``A`` -- matrix; A is a matrix which should be input as
-      A=matrix([[a,...,b],[c,...,d],...,[e,...,f]]) where [a,...,b],
-      [c,...,d],..., and [e,...,f] represent the extreme rays/vectors of
-      a cone.
+    - ``A`` -- a matrix or a list that is convertible to a matrix; the row
+      vectors of ``A`` span the cone for which we compute its solid angle.
 
-    - ``eps`` -- positive real number (default: `1e-6`); this parameter
+    - ``eps`` -- positive real number (default: ``1e-6``); this parameter
       is used to determine when the summation stops. In terms of the partial
-      sum, when s_n-s_(n-1) < eps, we stop adding terms to the partial sum
-      sequence.
+      sum, when `s_n-s_{n-1} < \epsilon`, we stop adding terms to the partial
+      sum sequence.
 
-    - ``deg`` -- integer (default: '100'); deg is the maximum sum of the
-      powers of the alpha_ij's in the summation (i.e. it is the maximum
+    - ``deg`` -- integer (default: `100`); deg is the maximum sum of the
+      powers of the `\alpha_{ij}`'s in the summation (i.e. it is the maximum
       sum of the terms in the multiexponent.)
+
+    - ``simplicial`` -- ``None`` (by default), or a Boolean. You can provide
+      ``simplicial=True`` to skip some checks if the row vectors of ``A`` are
+      known to represent the extreme rays of a simplicial cone.
+
+    - ``space`` -- either "ambient" (by default) or "affine", indicating with
+      respect to which space the solid angle of the cone is considered.
 
     OUTPUT:
 
-    - an estimate of the normalized solid angle measure spanned by the
-      the vectors given in A.
+    - an estimate of the normalized solid angle measure spanned by the row
+      vectors given in ``A``.
 
     EXAMPLES:
 
-    This example shows the measure of the solid angle spanned by
-    the vectors [1,0] and [-1,-1]. The exact value (based on the
-    arctan formula) is 0.375.::
+    This example shows the measure of the solid angle spanned by the vectors
+    ``[1,0]`` and ``[-1,-1]``. Note that it agrees with the value obtained by
+    the arctan formula.::
 
         sage: logging.disable(logging.INFO)
         sage: A = matrix([[1,0],[-1,-1]])
-        sage: solid_angle_general(A)
-        0.37499821138971134
+        sage: solid_angle_general(A, eps=1e-9, simplicial=True) # abs tol 2e-9
+        0.375
 
-    This example shows that when the vectors are linearly
-    dependent, the measure of the solid angle is 0::
+    This example shows that when the vectors are linearly dependent,
+    the measure of the solid angle with respect to the ambient space is 0::
 
-        sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
-        sage: solid_angle_general(A)
-        WARNING: cone(s) not full-dimensional
+        sage: A = matrix([[2,0,0], [0,3,0], [-4,-4,0]])
+        sage: solid_angle_general(A, space="ambient")
         0
 
-    This example shows the measure of the solid angle spanned by
-    the vectors [2,sqrt(2), 3], [-1,1, 2], and [-3,0,1.25], with
-    deg set to 20. The expected value (based on the arctan formula)
-    is 0.0118307689352399.::
+    In contrast, the solid angle of the same cone with respect to the
+    affine space is non-zero::
 
-        sage: A = matrix([[2,sqrt(2), 3],[-1,1, 2],[-3,0,1.25]])
-        sage: solid_angle_general(A, deg=20)
-        0.011882869827010274
+        sage: solid_angle_general(A, space="affine") # not tested
+
+    This example shows the measure of the solid angle spanned by
+    the vectors ``[2, sqrt(2), 3], [-1, 1, 2]``, and ``[-3, 0, 5/4]``, with
+    ``deg`` set to ``20`` and ``eps`` set to ``1e-6``. The relative error
+    compared to value ``0.01183`` obtained by the arctan formula is <0.5%.::
+
+        sage: A = matrix([[2, sqrt(2), 3], [-1, 1, 2], [-3, 0, 5/4]])
+        sage: a = solid_angle_general(A, deg=20, eps=1e-6)
+        sage: b = solid_angle_3d(A)
+        sage: abs(a-b)/b < 0.005
+        True
 
     This example shows an estimation of the measure of the solid angle
-    spanned by vectors R^5, with different deg values.::
+    spanned by vectors `\RR^5`, with different deg values.::
 
-        sage: A = matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
-        ....:            [0,0,-2,1,4],[0,0,0,0,1]])
-        sage: solid_angle_general(A, deg=10)
+        sage: A = [[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
+        ....:            [0,0,-2,1,4],[0,0,0,0,1]]
+        sage: solid_angle_general(A, deg=10)                   # abs tol 1e-15
         0.005330879073359687
 
-        sage: solid_angle_general(A, deg=12)
-        0.004870472360500354
+        sage: solid_angle_general(A, deg=12) # long time (18 s), abs tol 1e-15
+        0.004870472360500353
 
-    This example demonstrates that solid_angle_general works even
-    when the input is a matrix that does not correspond to a simplicial
-    cone. The expected result (based on the solid_angle_3d function)
-    is 0.301208191174783::
+    This example demonstrates that the method works even when the input
+    is a matrix that does not correspond to a simplicial cone. The expected
+    result 9based on the ``solid_angle_3d`` function) is ``0.3012081...``::
 
         sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
-        sage: solid_angle_general(A)
+        sage: solid_angle_general(A)                           # abs tol 1e-15
         0.3012056062147818
 
     This example illustrates that when the input matrix has an
     associated matrix that is not positive definite, a warning appears::
 
-        sage: A = matrix([[1,2,-1,2,0],[-3,0,0,0,2],[1,-2,-0.4,0,0],
+        sage: A = matrix([[1,2,-1,2,0],[-3,0,0,0,2],[1,-2,-2/5,0,0],
         ....:            [0,0,0,-2,1],[-1,-1,0,-1,0]])
-        sage: solid_angle_general(A, deg=10)
-        WARNING: Associated matrix NOT positive definite,
-            series does not converge
-        0.04011107450496622
+        sage: solid_angle_general(A, deg=5)                    # abs tol 1e-15
+        WARNING: Associated matrix NOT positive definite, series NOT converge
+        0.027044019290803845
 
     TESTS:
 
     The example below is based on Example 3.4 in Gourion and Seeger (see
-    notes). For the matrix [[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
-    [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]], the authors used
-    truncated forms of Ribando's formula, testing deg = 0,1,2,5,,10,20, and
-    40. The estimates they obtained were 0.097403, 0.067204, 0.082871,
-    0.079939, 0.080930, 0.080878, and 0.080878 respectively. The authors
-    normalized their measurement with respect to a half space. Thus, the
-    function should return estimates that are half of the above values.
-    Below, we show that this is the case.::
+    notes). For the matrix ``A`` below, the authors used truncated forms
+    of Ribando's formula, testing deg = 0,1,2,5,10,20, and 40.
+    The estimates they obtained were 0.097403, 0.067204, 0.082871, 0.079939,
+    0.080930, 0.080878, and 0.080878 respectively. The authors normalized
+    their measurement with respect to a half space. Thus, the function should
+    return estimates that are half of the above values. Below, we show that
+    this is the case. We observe that the last two returns are equal, showing
+    that eps=1e-6 is too large when deg=40.::
 
         sage: logging.disable(logging.INFO)
-        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        sage: A = matrix([[1/2, -1/2, -1/2, 1/2],[1/2, 1/10, 7/10, 1/2],
         ....:     [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]])
-        sage: solid_angle_general(A, deg=0)
+        sage: solid_angle_general(A, deg=0)                    # abs tol 1e-15
         0.04870129870129871
 
-        sage: solid_angle_general(A, deg=1)
+        sage: solid_angle_general(A, deg=1)                    # abs tol 1e-15
         0.03360184592862353
 
-        sage: solid_angle_general(A, deg=2)
+        sage: solid_angle_general(A, deg=2)                    # abs tol 1e-15
         0.04319218542971285
 
-        sage: solid_angle_general(A, deg=5)
+        sage: solid_angle_general(A, deg=5)                    # abs tol 1e-15
         0.03996966211891789
 
-        sage: solid_angle_general(A, deg=10)
+        sage: solid_angle_general(A, deg=10)                   # abs tol 1e-15
         0.0404638509737549
 
-        sage: solid_angle_general(A, deg=20)
+        sage: solid_angle_general(A, deg=20)  # long time (28s), abs tol 1e-15
         0.04043924941007705
 
-        sage: solid_angle_general(A, deg=40)
+        sage: solid_angle_general(A, deg=40)  # long time (28s), abs tol 1e-15
         0.04043924941007705
 
     .. NOTE::
@@ -575,21 +578,21 @@ def simplicial_subcones_decomposition(A):
 
     INPUT:
 
-    - ``A`` -- matrix; A is a matrix whose row vectors are a generating set for
-      a cone (not necessarily simplicial.)
+    - ``A`` -- matrix; ``A`` is a matrix whose row vectors are a generating set
+      for a cone (not necessarily simplicial.)
 
     OUTPUT:
 
     - a list of matrices that corresponds to the dissection of the cone
-      spanned by the rows of A into simplicial cones.
+      spanned by the rows of ``A`` into simplicial cones.
       Each matrix represents a simplicial cone in the dissection.
 
     EXAMPLES:
 
-    This example shows that the cone spanned by [1,0,0],[0,1,0],[0,0,1],
-    and [-1,0,0] can be dissected into two simplicial cones, one with
-    extreme rays [1,0,0], [0,1,0], [0,0,1] and the other with extreme
-    rays [0,1,0], [0,0,1], [-1,0,0]::
+    This example shows that the cone spanned by ``[1,0,0],[0,1,0],[0,0,1]``,
+    and ``[-1,0,0]`` can be dissected into two simplicial cones, one with
+    extreme rays ``[1,0,0], [0,1,0], [0,0,1]`` and the other with extreme
+    rays ``[0,1,0], [0,0,1], [-1,0,0]``::
 
         sage: logging.disable(logging.NOTSET)
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1],[-1,0,0]])
@@ -612,7 +615,7 @@ def simplicial_subcones_decomposition(A):
         ]
 
     This example shows that the function works in higher dimensions,
-    such as R^4. The input can as well be in the form of a list of vectors::
+    such as `\RR^4`. The input can as well be in the form of a list of vectors::
 
         sage: A_in = [[1,0,-2,0],[1,2,3,-2],[-1,3,4,4],[-2,-1,0,0],[1,1,1,3]]
         sage: simplicial_subcones_decomposition(A_in)
@@ -624,25 +627,25 @@ def simplicial_subcones_decomposition(A):
         ]
 
 
-    This example shows that if the vectors in A are in R^n, but the
+    This example shows that if the vectors in ``A`` are in `\RR^n`, but the
     cone spanned by the vectors lives in a lower dimensional space,
     then it is noted that the cone(s) are not simplicial::
 
         sage: A = matrix([[1,0,0],[0,1,0],[3,2,0]])
         sage: simplicial_subcones_decomposition(A)
-        WARNING: cone(s) not full-dimensional
+        INFO: cone(s) not full-dimensional
         [
         [1 0 0]  [0 1 0]
         [3 2 0], [3 2 0]
         ]
 
-    This example shows that the cone in R^4 spanned by the row
-    vectors of A is actually a halfspace of affine dimension 2.
-    The triangulation dissects it into three 2d subcones::
+    This example shows that the cone in `\RR^4` spanned by the rows of ``A``
+    (which is input as a list of lists) is actually a halfspace of affine
+    dimension `2`. The triangulation dissects it into three 2-d subcones::
 
         sage: A_in = [[-3,0,5,0],[0,0,1,0],[-4,0,0,0],[-1,0,0,0],[0,0,-4,0]]
         sage: simplicial_subcones_decomposition(A_in)
-        WARNING: cone(s) not full-dimensional
+        INFO: cone(s) not full-dimensional
         [
         [-3  0  5  0]  [-3  0  5  0]  [-4  0  0  0]
         [ 0  0  1  0], [-4  0  0  0], [ 0  0 -4  0]
@@ -652,7 +655,7 @@ def simplicial_subcones_decomposition(A):
         A = matrix(A)
     r = A.rank()
     if r < A.ncols():
-        logging.warning("cone(s) not full-dimensional")
+        logging.info("cone(s) not full-dimensional")
     if A.rank() == A.nrows():
         return [A]
     else:
@@ -670,23 +673,22 @@ def simplicial_subcones_decomposition(A):
 def normalize_rows(A):
     r"""
     Return a matrix whose row vectors are the normalized row vectors
-    of the matrix A.
+    of the matrix ``A``.
 
     INPUT:
 
-    - ``A`` -- matrix; A is a matrix which should be input as
-      A=matrix([[a,...,b],[c,...,d],...,[e,...,f]]).
+    - ``A`` -- matrix.
 
     OUTPUT:
 
     - a matrix whose rows are unit vectors. The vectors are the
-    normalized row vectors of A. The entries in the matrix are
-    given as approximations.
+      normalized row vectors of ``A``. The entries in the matrix are
+      given as approximations (type ``RDF``).
 
     EXAMPLES:
 
     This example shows the matrix whose rows are in the same
-    direction as the corresponding row vectors of A, but have
+    direction as the corresponding row vectors of ``A``, but have
     length 1::
 
         sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
@@ -731,39 +733,39 @@ def composition_of_n_into_k_parts(n, k):
 
     INPUT:
 
-    - ``n`` -- integer; n is the integer that we want to find the weak
+    - ``n`` -- integer; ``n`` is the integer that we want to find the weak
       compositions of.
 
-    - ``k`` -- integer; k is the positive integer giving the number of
+    - ``k`` -- integer; ``k`` is the positive integer giving the number of
       parts we want in a composition of n.
 
 
     OUTPUT:
 
-    - a generator object containing the k tuples that are weak compositions
-      of n. Use list(composition_of_n_into_k_parts(n,k)) to view the list.
+    - a generator object containing the ``k`` tuples that are weak compositions
+      of ``n``.
 
     EXAMPLES:
 
-    This example shows the weak compositions of 3 into 2 parts::
+    This example shows the weak compositions of `3` into `2` parts::
 
         sage: list(composition_of_n_into_k_parts(3,2))
         [[0, 3], [1, 2], [2, 1], [3, 0]]
 
     This example illustrates how the function can be used to find the number of
-    the weak compositions of 11 into 2 parts::
+    the weak compositions of `11` into `2` parts::
 
         sage: len(list(composition_of_n_into_k_parts(11,2)))
         12
 
-    This example shows that when k=1, the list returned has only the
-    entry [n]::
+    This example shows that when `k=1`, the list returned has only the
+    entry ``[n]``::
 
         sage: list(composition_of_n_into_k_parts(4,1))
         [[4]]
 
-    This example shows that when n=0, the list returned has only one
-    entry, a k-tuple of 0's::
+    This example shows that when `n=0`, the list returned has only one
+    entry, a `k`-tuple of `0`'s::
 
         sage: list(composition_of_n_into_k_parts(0,6))
         [[0, 0, 0, 0, 0, 0]]
@@ -772,7 +774,7 @@ def composition_of_n_into_k_parts(n, k):
     .. NOTE::
 
         This function is used to develop a truncation form for the
-        multivariate power series T_alpha in Ribando's paper
+        multivariate power series `T_{\alpha}` in Ribando's paper
         "Measuring solid angles beyond dimension three."
     """
     if k == 1:
@@ -785,40 +787,35 @@ def composition_of_n_into_k_parts(n, k):
                 yield [i]+c
 
 
-def M_alpha_posdef(A):
+def is_M_alpha_posdef(A):
     r"""
-    Return a statement as to whether the associated matrix to v,
-    M(1, -|v[i]*v[j]|) is positive definite or not. Here, * represents
+    Return a statement as to whether the associated matrix to ``A``,
+    ``M(1, -|A[i] * A[j]|)`` is positive definite or not. Here, ``*`` represents
     the dot product.
 
     INPUT:
 
-    - ``v`` -- a square matrix whose row vectors span a simplicial cone.
-    The matrix should be input as v = matrix([[a,...,b], [c,...,d],...,
-    [e,...,f]]).
+    - ``A`` -- a square matrix whose row vectors span a simplicial cone.
 
-    OUTPUT: the function prints either "Associated matrix is NOT positive
-    definite" if the associated matrix, M(1, -|v[i]*v[j]|) is not positive
-    definite, and "Associated matrix is positive definite" if the associated
-    matrix is positive definite.
+    OUTPUT: ``Ture`` or ``False``.
 
     EXAMPLES:
 
-    This example shows that the associated matrix of [[1,-1,0],[2,1,1],
-    [-1,0,0]] is not positive definite.::
+    This example shows that the associated matrix of ``[[1,-1,0],[2,1,1],
+    [-1,0,0]]`` is not positive definite.::
 
         sage: logging.disable(logging.INFO)
         sage: A = matrix([[1,-1,0],[2,1,1],[-1,0,0]])
-        sage: M_alpha_posdef(A)
+        sage: is_M_alpha_posdef(A)
         False
 
     In this example, we use the matrix given in Example 3.4 of Gourion and
     Seeger. The authors note that the associated matrix is positive definite.
     We see that our output aligns with this result.::
 
-        sage: A = matrix([[0.5, -0.5, -0.5, 0.5],[0.5,0.1,0.7,0.5],
+        sage: A = matrix([[1/2, -1/2, -1/2, 1/2],[1/2, 1/10, 7/10, 1/2],
         ....:   [-4/7, 4/7, 1/7, 4/7],[-4/11, -5/11, 8/11, 4/11]])
-        sage: M_alpha_posdef(A)
+        sage: is_M_alpha_posdef(A)
         True
 
     The following examples illustrate that the function works in higher
@@ -826,12 +823,12 @@ def M_alpha_posdef(A):
 
         sage: A = matrix([[1,2,3,4,5],[-1,3,0,-4,1],[5,0,0,-1,0],
         ....:   [0,0,-2,1,4],[0,0,0,0,1]])
-        sage: M_alpha_posdef(A)
+        sage: is_M_alpha_posdef(A)
         False
 
         sage: A = matrix([[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
         ....:   [0,0,-2,1,4],[0,0,0,0,1]])
-        sage: M_alpha_posdef(A)
+        sage: is_M_alpha_posdef(A)
         True
 
     .. NOTE::
