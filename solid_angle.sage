@@ -284,7 +284,7 @@ def solid_angle_2d(A):
     if A.nrows() == 2:
         return solid_angle_simplicial_2d(A)
     A_list = simplicial_subcones_decomposition(A)
-    logging.info("Decompose into simplicial subcones %s" % A_list)
+    logging.info('Decompose into simplicial subcones\n'+',\n'.join('{}'.format(Ai) for Ai in A_list))
     results = [solid_angle_simplicial_2d(Ai) for Ai in A_list]
     logging.info("Solid angles of the subcones are %s" % results)
     return sum(results)
@@ -357,7 +357,7 @@ def solid_angle_3d(A, method="arctan"):
     if A.nrows() == 3:
         return solid_angle_function(A)
     A_list = simplicial_subcones_decomposition(A)
-    logging.info("Decompose into simplicial cones %s" % A_list)
+    logging.info('Decompose into simplicial subcones\n'+',\n'.join('{}'.format(Ai) for Ai in A_list))
     results = [solid_angle_function(Ai) for Ai in A_list]
     logging.info("Solid angles of the subcones are %s" % results)
     return sum(results)
@@ -617,8 +617,8 @@ def simplicial_subcones_decomposition(A):
         [-5  4  2]
         ]
 
-    This example shows that the function works in higher dimensions,
-    such as `\RR^4`. The input can also be in the form of a list of vectors::
+    This example shows that the function works in higher dimensions, such as
+    `\RR^4`. Note that the input can also be in the form of a list of vectors::
 
         sage: A_in = [[1,0,-2,0],[1,2,3,-2],[-1,3,4,4],[-2,-1,0,0],[1,1,1,3]]
         sage: simplicial_subcones_decomposition(A_in)
@@ -629,14 +629,11 @@ def simplicial_subcones_decomposition(A):
         [-2 -1  0  0], [ 1  1  1  3], [ 1  1  1  3], [ 1  1  1  3]
         ]
 
-
-    This example shows that if the vectors in ``A`` are in `\RR^n`, but the
-    cone spanned by the vectors lives in a lower dimensional space,
-    then it is noted that the cone(s) are not simplicial::
+    This example shows when the vectors in ``A`` are in `\RR^n`, but the
+    cone spanned by the vectors lives in a lower dimensional space::
 
         sage: A = matrix([[1,0,0],[0,1,0],[3,2,0]])
         sage: simplicial_subcones_decomposition(A)
-        INFO: cone(s) not full-dimensional
         [
         [1 0 0]  [0 1 0]
         [3 2 0], [3 2 0]
@@ -648,7 +645,6 @@ def simplicial_subcones_decomposition(A):
 
         sage: A_in = [[-3,0,5,0],[0,0,1,0],[-4,0,0,0],[-1,0,0,0],[0,0,-4,0]]
         sage: simplicial_subcones_decomposition(A_in)
-        INFO: cone(s) not full-dimensional
         [
         [-3  0  5  0]  [-3  0  5  0]  [-4  0  0  0]
         [ 0  0  1  0], [-4  0  0  0], [ 0  0 -4  0]
@@ -657,8 +653,6 @@ def simplicial_subcones_decomposition(A):
     if not hasattr(A, 'nrows'):
         A = matrix(A)
     r = A.rank()
-    if r < A.ncols():
-        logging.info("cone(s) not full-dimensional")
     if A.rank() == A.nrows():
         return [A]
     else:
