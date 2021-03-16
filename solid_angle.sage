@@ -618,7 +618,7 @@ def simplicial_subcones_decomposition(A):
         ]
 
     This example shows that the function works in higher dimensions,
-    such as `\RR^4`. The input can as well be in the form of a list of vectors::
+    such as `\RR^4`. The input can also be in the form of a list of vectors::
 
         sage: A_in = [[1,0,-2,0],[1,2,3,-2],[-1,3,4,4],[-2,-1,0,0],[1,1,1,3]]
         sage: simplicial_subcones_decomposition(A_in)
@@ -735,13 +735,12 @@ def composition_of_n_into_k_parts(n, k):
 
 def is_M_alpha_posdef(A):
     r"""
-    Return a statement as to whether the associated matrix to ``A``,
-    ``M(1, -|A[i] * A[j]|)`` is positive definite or not. Here, ``*`` represents
-    the dot product.
+    Return whether the associated matrix `M(1, -|\alpha_{ij}|)` for the given
+    matrix ``A`` is positive definite or not (see note).
 
     INPUT:
 
-    - ``A`` -- a square matrix whose row vectors span a simplicial cone.
+    - ``A`` -- matrix whose row vectors span a simplicial cone.
 
     OUTPUT: ``Ture`` or ``False``.
 
@@ -779,21 +778,29 @@ def is_M_alpha_posdef(A):
 
     .. NOTE::
 
+        Here, `M(1, -|\alpha_{ij}|)` denotes the symmetric matrix with diagonal
+        entries 1 and off-diagonal entry `-|\alpha_{ij}|)` for `i\neq j`, where
+        `\alpha_{ij}` is the normal vector of the dot product of the i-th and
+        the j-th rows of the given matrix ``A``.
+
         This function is used as a test for the convergence of
         Ribando's power series for the solid angle of a cone. By
         Corollary 3.2 in Ribando's paper "Measuring solid angles
         beyond dimension three," the series converges if and only if
         the associated matrix is positive definite.
     """
-    n = A.nrows()
-    B = matrix(RDF, [A[i]/A[i].norm() for i in range(n)])
-    M = matrix(RDF, n)
-    for i in range(n):
-        for j in range(i, n):
+    d = A.nrows()
+    M_exact = A * A.transpose()  # unnormalized matrix with diag entries not 1
+    vnorm = [A[i].norm() for i in range(d)]
+    M = matrix(RDF, d)
+    for i in range(d):
+        for j in range(d):
             if i != j:
-                M[i, j] = -abs(B[i]*B[j])
-                M[j, i] = M[i, j]
-            else:
-                M[i, j] = 1
-    logging.info("Associated Matrix: %s" % M)
-    return M.is_positive_definite()
+                M_exact[i, j] = - abs(M_exact[i, j])
+            M[i, j] = RDF(M_exact[i, j] / (vnorm[i] * vnorm[j]))
+    try:  # We prefer testing pos-def on M_exact over exact ring
+        t = M_exact.is_positive_definite()
+    except ValueError:  # Note that M is pos-def iff M_exact is pos-def
+        t = M.is_positive_definite()
+    logging.info("Associated Matrix:\n%s" % M)
+    return t
