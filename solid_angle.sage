@@ -6,8 +6,8 @@ load("~/ma611-code/logging.sage")
 # **********************************************************
 def solid_angle_simplicial_2d(A):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned by the
-    vectors given by the two rows of ``A``.
+    Return the normalized solid angle measure of the cone spanned by the
+    two row vectors of ``A``.
 
     INPUT:
 
@@ -67,8 +67,8 @@ The input can be a list of vectors instead of a matrix as well::
 
 def solid_angle_simplicial_arccos_3d(A):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned by
-    three vectors given by the rows of ``A``.
+    Return the normalized solid angle measure of the cone spanned by
+    the three row vectors of ``A``.
 
     INPUT:
 
@@ -148,8 +148,8 @@ def solid_angle_simplicial_arccos_3d(A):
 
 def solid_angle_simplicial_arctan_3d(A):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned by
-    three vectors given by the rows of ``A``.
+    Return the normalized solid angle measure of the cone spanned by
+    the three row vectors of ``A``.
 
     INPUT:
 
@@ -227,13 +227,13 @@ def solid_angle_simplicial_arctan_3d(A):
 # **********************************************************
 def solid_angle_2d(A):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned
+    Return the normalized solid angle measure of the cone spanned by two
     vectors in R^2.
 
     INPUT:
 
-    - ``A`` -- ``n`` by 2 matrix whose rows vectors span the cone in `\RR^2` of
-      which we look for the solid angle. The input can be in the form of a
+    - ``A`` -- `n\times 2` matrix whose rows vectors span the cone in `\RR^2`
+      of which we look for the solid angle. The input can be in the form of a
       matrix or as a list of vectors in `\RR^2`.
 
     OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
@@ -284,7 +284,8 @@ def solid_angle_2d(A):
     if A.nrows() == 2:
         return solid_angle_simplicial_2d(A)
     A_list = simplicial_subcones_decomposition(A)
-    logging.info('Decompose into simplicial subcones\n'+',\n'.join('{}'.format(Ai) for Ai in A_list))
+    logging.info('Decompose into simplicial subcones\n' +
+                 ',\n'.join('{}'.format(Ai) for Ai in A_list))
     results = [solid_angle_simplicial_2d(Ai) for Ai in A_list]
     logging.info("Solid angles of the subcones are %s" % results)
     return sum(results)
@@ -292,12 +293,12 @@ def solid_angle_2d(A):
 
 def solid_angle_3d(A, method="arctan"):
     r"""
-    Return the normalized solid angle measure of the solid angle spanned
-    by vectors in `\RR^3`.
+    Return the normalized solid angle measure of the cone spanned
+    by three vectors in `\RR^3`.
 
     INPUT:
 
-    - ``A`` -- ``n`` by 3 matrix whose rows vectors span the cone in `\RR^3`
+    - ``A`` -- `n\times 3` matrix whose rows vectors span the cone in `\RR^3`
       of which we look for the solid angle. The input can be in the form of a
       matrix or as a list of vectors in `\RR^2`.
 
@@ -357,7 +358,8 @@ def solid_angle_3d(A, method="arctan"):
     if A.nrows() == 3:
         return solid_angle_function(A)
     A_list = simplicial_subcones_decomposition(A)
-    logging.info('Decompose into simplicial subcones\n'+',\n'.join('{}'.format(Ai) for Ai in A_list))
+    logging.info('Decompose into simplicial subcones\n' +
+                 ',\n'.join('{}'.format(Ai) for Ai in A_list))
     results = [solid_angle_function(Ai) for Ai in A_list]
     logging.info("Solid angles of the subcones are %s" % results)
     return sum(results)
@@ -367,8 +369,8 @@ def solid_angle_general(A, eps=1e-6, deg=100,
                         simplicial=None, space="ambient"):
     r"""
     Return an estimate of the normalized solid angle measure of the
-    simplicial solid angle spanned by vectors given by the rows of ``A``,
-    based on a truncated form of Jason Ribando's formula(see note).
+    cone spanned by the row vectors of the given matrix ``A``,
+    based on a truncated form of Jason Ribando's formula (see note).
 
     INPUT:
 
@@ -470,7 +472,6 @@ def solid_angle_general(A, eps=1e-6, deg=100,
     this is the case. We observe that the last two returns are equal, showing
     that eps=1e-6 is too large when deg=40.::
 
-        sage: logging.disable(logging.INFO)
         sage: A = matrix([[1/2, -1/2, -1/2, 1/2],[1/2, 1/10, 7/10, 1/2],
         ....:     [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]])
         sage: solid_angle_general(A, deg=0)                    # abs tol 1e-15
@@ -592,7 +593,7 @@ def simplicial_subcones_decomposition(A):
 
     EXAMPLES:
 
-    This example shows that the cone spanned by ``[1,0,0],[0,1,0],[0,0,1]``,
+    This example shows that the cone spanned by ``[1,0,0], [0,1,0], [0,0,1]``,
     and ``[-1,0,0]`` can be dissected into two simplicial cones, one with
     extreme rays ``[1,0,0], [0,1,0], [0,0,1]`` and the other with extreme
     rays ``[0,1,0], [0,0,1], [-1,0,0]``::
@@ -773,9 +774,9 @@ def is_M_alpha_posdef(A):
     .. NOTE::
 
         Here, `M(1, -|\alpha_{ij}|)` denotes the symmetric matrix with diagonal
-        entries 1 and off-diagonal entry `-|\alpha_{ij}|)` for `i\neq j`, where
-        `\alpha_{ij}` is the normal vector of the dot product of the i-th and
-        the j-th rows of the given matrix ``A``.
+        entries 1 and off-diagonal entries `-|\alpha_{ij}|` for `i\neq j`,
+        where `\alpha_{ij}` is the normal vector of the dot product of the
+        i-th and the j-th rows of the given matrix ``A``.
 
         This function is used as a test for the convergence of
         Ribando's power series for the solid angle of a cone. By
