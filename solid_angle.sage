@@ -21,23 +21,23 @@ def solid_angle_simplicial_2d(A):
 
     This example shows the solid angle spanned by the vectors [0,1] and [1,0]::
 
-        sage: solid_angle_simplicial_2d(matrix([[0,1],[1,0]]))
+        sage: solid_angle_simplicial_2d(matrix([[0,1],[1,0]])) # abs tol 1e-15
         0.25
 
     The input can be a list of vectors instead of a matrix::
 
-        sage: solid_angle_simplicial_2d([[0,1],[1,0]])
+        sage: solid_angle_simplicial_2d([[0,1],[1,0]])         # abs tol 1e-15
         0.25
 
     We now show the solid angle spanned by the vectors [1,0], [-1, sqrt(3)]::
 
-        sage: solid_angle_simplicial_2d(matrix([[1,0],[-1,sqrt(3)]]))
+        sage: solid_angle_simplicial_2d([[1,0], [-1,sqrt(3)]]) # abs tol 1e-15
         0.3333333333333333
 
     This example illustrates how the solid angle measure will not greater than
     0.5 as the function always outputs the minimal angle between the two rays::
 
-        sage: solid_angle_simplicial_2d(matrix([[1,0],[-1,-1]]))
+        sage: solid_angle_simplicial_2d([[1,0],[-1,-1]])       # abs tol 1e-15
         0.375
 
     .. NOTE::
@@ -48,13 +48,13 @@ def solid_angle_simplicial_2d(A):
     The following tests check for corner cases where the vectors are
     antiparallel, parallel and perpendicular, respectively.
 
-        sage: solid_angle_simplicial_2d(matrix([[1,1],[-1,-1]]))
+        sage: solid_angle_simplicial_2d([[1,1],[-1,-1]])       # abs tol 1e-15
         0.5
 
-        sage: solid_angle_simplicial_2d(matrix([[1,2],[2,4]]))
+        sage: solid_angle_simplicial_2d([[1,2],[2,4]])         # abs tol 1e-15
         0.0
 
-        sage: solid_angle_simplicial_2d(matrix([[2,2],[-1,1]]))
+        sage: solid_angle_simplicial_2d([[2,2],[-1,1]])        # abs tol 1e-15
         0.25
     """
     if not hasattr(A, 'nrows'):
@@ -90,22 +90,23 @@ def solid_angle_simplicial_arccos_3d(A):
     EXAMPLES:
 
     This example shows the measure of the solid angle spanned by the vectors
-    [1,0,0],[0,1,0], and [0,0,1]::
+    [1,0,0], [0,1,0], and [0,0,1]::
 
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
-        sage: solid_angle_simplicial_arccos_3d(A)
+        sage: solid_angle_simplicial_arccos_3d(A)              # abs tol 1e-15
         0.125
 
     The input can be a list of vectors instead of a matrix::
 
-        sage: solid_angle_simplicial_arccos_3d([[0,0,3],[-1,-1,0],[-2,2,0]])
+        sage: solid_angle_simplicial_arccos_3d(
+        ....:         [[0,0,3],[-1,-1,0],[-2,2,0]])            # abs tol 1e-15
         0.125
 
     This example shows the solid angle of a cone in 3d with affine dimension 2.
     In contrast to ``solid_angle_3d``, this formula gives a non-zero angle::
 
         sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
-        sage: solid_angle_simplicial_arccos_3d(A)
+        sage: solid_angle_simplicial_arccos_3d(A)              # abs tol 1e-15
         0.5
 
     It is an error to input a matrix A, which has two vectors
@@ -174,19 +175,20 @@ def solid_angle_simplicial_arctan_3d(A):
     [1,0,0],[0,1,0], and [0,0,1]::
 
         sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]])
-        sage: solid_angle_simplicial_arctan_3d(A)
+        sage: solid_angle_simplicial_arctan_3d(A)              # abs tol 1e-15
         0.125
 
     The input can be a list of vectors instead of a matrix::
 
-        sage: solid_angle_simplicial_arctan_3d([[0,0,3],[-1,-1,0],[-2,2,0]])
+        sage: solid_angle_simplicial_arctan_3d(
+        ....:         [[0,0,3],[-1,-1,0],[-2,2,0]])            # abs tol 1e-15
         0.125
 
     This example shows the solid angle of a cone in 3d with affine dimension 2.
     In contrast to ``solid_angle_3d``, this formula gives a non-zero angle::
 
         sage: A = matrix([[2,0,0],[0,3,0],[-4,-4,0]])
-        sage: solid_angle_simplicial_arctan_3d(A)
+        sage: solid_angle_simplicial_arctan_3d(A)              # abs tol 1e-15
         0.5
 
     It is an error to input a matrix A where one row is a multiple of another::
@@ -250,23 +252,23 @@ def solid_angle_2d(A):
 
         sage: logging.disable(logging.WARNING)
         sage: A = matrix([[2,3],[-3,-7]])
-        sage: solid_angle_2d(A)
+        sage: solid_angle_2d(A)                                # abs tol 1e-15
         0.4708570082990789
 
         sage: A = matrix([[1,0],[0,1],[-1,0]])
-        sage: solid_angle_2d(A)
+        sage: solid_angle_2d(A)                                # abs tol 1e-15
         0.5
 
         sage: A = matrix([[1,1],[1,2],[-1,1],[-3,0]])
-        sage: solid_angle_2d(A)
-        0.3750000000000001
+        sage: solid_angle_2d(A)                                # abs tol 1e-15
+        0.375
 
 
     This example illustrates how the solid angle measure can equal 1. That is,
     the span of the rays is all of space::
 
         sage: A = matrix([[1,1],[0,-1],[-1,-1],[-3,0]])
-        sage: solid_angle_2d(A)
+        sage: solid_angle_2d(A)                                # abs tol 1e-15
         1.0
 
     Check corner case where the where cones have affine dimension less than 2::
@@ -316,30 +318,29 @@ def solid_angle_3d(A, method="arctan"):
     three, four or five vectors in R^3, respectively::
 
         sage: logging.disable(logging.WARNING)
-        sage: A = matrix([[1,0,2],[-1,3,1],[1,0,-1]])
-        sage: solid_angle_3d(A)
+        sage: solid_angle_3d([[1,0,2],[-1,3,1],[1,0,-1]])      # abs tol 1e-15
         0.1817687464348209
 
         sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
-        sage: solid_angle_3d(A)
+        sage: solid_angle_3d(A)                                # abs tol 1e-15
         0.30120819117478337
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
-        sage: solid_angle_3d(A)
-        0.37499999999999994
+        sage: solid_angle_3d(A)                                # abs tol 1e-15
+        0.375
 
     This example illustrates how using the arcos method instead of the
     default atan method gives the same result::
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
-        sage: solid_angle_3d(A, method="arccos")
+        sage: solid_angle_3d(A, method="arccos")               # abs tol 1e-15
         0.375
 
     This example illustrates how the solid angle measure can equal 1. That is,
     the span of the rays is all of space::
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,1],[0,0,-1],[0,-1,0]])
-        sage: solid_angle_3d(A)
+        sage: solid_angle_3d(A)                                # abs tol 1e-15
         1.0
 
     Check corner case where the where cones have affine dimension less than 3::
@@ -513,8 +514,8 @@ def solid_angle_general(A, eps=1e-6, deg=100, simplicial=None):
         else:
             t = M_alpha_posdef(A)
             if t is False:
-                logging.warning("Associated matrix NOT positive definite,\
-    series does not converge")
+                logging.warning("Associated matrix NOT positive definite, "
+                                "series NOT converge")
             v = normalize_rows(A)
             d = v.nrows()
             da = int(d*(d-1)/2)
