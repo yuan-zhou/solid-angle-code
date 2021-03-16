@@ -414,12 +414,13 @@ def solid_angle_general(A, eps=1e-6, deg=100,
 
         sage: A = matrix([[2,0,0], [0,3,0], [-4,-4,0]])
         sage: solid_angle_general(A, space="ambient")
+        WARNING: cone not full-dimensional
         0
 
-    In contrast, the solid angle of the same cone with respect to the
-    affine space is non-zero::
+    In contrast, when considered in the affine space, the solid angle is 1::
 
-        sage: solid_angle_general(A, space="affine") # not tested
+        sage: solid_angle_general(A, eps=1e-16, space="affine") # abs tol 1e-15
+        1
 
     This example shows the measure of the solid angle spanned by
     the vectors ``[2, sqrt(2), 3], [-1, 1, 2]``, and ``[-3, 0, 5/4]``, with
@@ -511,54 +512,51 @@ def solid_angle_general(A, eps=1e-6, deg=100,
     """
     if not hasattr(A, 'nrows'):
         A = matrix(A)
+    if space == "ambient" and A.rank() < A.ncols():
+        logging.warning("cone not full-dimensional")
+        return 0
     if simplicial is True:
-        if A.nrows() != len(A[0]):
-            return 0
-        if A.det() == 0:
-            logging.info("determinant is 0")
-            return 0
-        else:
-            t = is_M_alpha_posdef(A)
-            if t is False:
-                logging.warning("Associated matrix NOT positive definite, "
-                                "series NOT converge")
-            d = A.nrows()
-            v = matrix(RDF, [A[i]/A[i].norm() for i in range(d)])
-            da = int(d * (d-1) / 2)
-            const = abs(v.determinant()) / (RDF(4*pi) ** (d/2))
-            alpha = [0] * da
-            for i in range(d - 1):
-                for j in range(i + 1, d):
-                    k = (2*d - i - 1) * i/2 + j - i - 1
-                    alpha[k] = v[i] * v[j]
-            partial_sum = 0
-            for n in range(deg + 1):
-                sum_deg_n = 0
-                for a in composition_of_n_into_k_parts(n, da):
-                    alphatoa = 1
-                    for k in range(da):
-                        alphatoa = alpha[k] ** a[k] * alphatoa
-                        if alphatoa == 0:
-                            break
+        t = is_M_alpha_posdef(A)
+        if t is False:
+            logging.warning("Associated matrix NOT positive definite, "
+                            "series NOT converge")
+        d = A.nrows()
+        v = matrix(RDF, [A[i]/A[i].norm() for i in range(d)])
+        da = int(d * (d-1) / 2)
+        const = sqrt((v * v.transpose()).determinant()) / (RDF(4*pi) ** (d/2))
+        alpha = [0] * da
+        for i in range(d - 1):
+            for j in range(i + 1, d):
+                k = (2*d - i - 1) * i/2 + j - i - 1
+                alpha[k] = v[i] * v[j]
+        partial_sum = 0
+        for n in range(deg + 1):
+            sum_deg_n = 0
+            for a in composition_of_n_into_k_parts(n, da):
+                alphatoa = 1
+                for k in range(da):
+                    alphatoa = alpha[k] ** a[k] * alphatoa
                     if alphatoa == 0:
-                        continue
-                    t = (-2) ** (sum(a))
-                    fact_denom = prod([factorial(a[k]) for k in range(da)])
-                    coef = t / fact_denom
-                    for i in range(d):
-                        s_i = 0
-                        for j in range(d):
-                            if j != i:
-                                m_1 = max(i, j)
-                                m_0 = min(i, j)
-                                k = (2*d - m_0 - 1) * m_0 / 2 + m_1 - m_0 - 1
-                                s_i += a[k]
-                        coef = coef * gamma(0.5 * (s_i + 1))
-                    sum_deg_n += coef * alphatoa
-                partial_sum += sum_deg_n
-                if abs(const * sum_deg_n) < eps:
-                    break
-            return const * (partial_sum)
+                        break
+                if alphatoa == 0:
+                    continue
+                t = (-2) ** (sum(a))
+                fact_denom = prod([factorial(a[k]) for k in range(da)])
+                coef = t / fact_denom
+                for i in range(d):
+                    s_i = 0
+                    for j in range(d):
+                        if j != i:
+                            m_1 = max(i, j)
+                            m_0 = min(i, j)
+                            k = (2*d - m_0 - 1) * m_0 / 2 + m_1 - m_0 - 1
+                            s_i += a[k]
+                    coef = coef * gamma(0.5 * (s_i + 1))
+                sum_deg_n += coef * alphatoa
+            partial_sum += sum_deg_n
+            if abs(const * sum_deg_n) < eps:
+                break
+        return RDF(const * (partial_sum))
     else:
         A_list = simplicial_subcones_decomposition(A)
         n = len(A_list)
