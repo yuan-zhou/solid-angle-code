@@ -587,7 +587,7 @@ def simplicial_subcones_decomposition(A):
     r"""
     Return a list of matrices that give the extreme rays
     of the simplicial cones formed from the triangulation
-    of A.
+    of ``A``.
 
     INPUT:
 
