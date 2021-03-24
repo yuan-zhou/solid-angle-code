@@ -331,8 +331,8 @@ def solid_angle_3d(A, method="arctan"):
         sage: solid_angle_3d(A)                                # abs tol 1e-15
         0.375
 
-    This example illustrates how using the arcos method instead of the
-    default atan method gives the same result::
+    This example illustrates how using the `arccos` method instead of the
+    default `arctan` method gives the same result::
 
         sage: A = matrix([[1,0,0],[0,1,0],[-1,0,0],[0,0,-1],[1,1,1]])
         sage: solid_angle_3d(A, method="arccos")               # abs tol 1e-15
