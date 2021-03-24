@@ -307,11 +307,12 @@ def solid_angle_3d(A, method="arctan"):
 
     - ``A`` -- `n\times 3` matrix whose rows vectors span the cone in `\RR^3`
       of which we look for the solid angle. The input can be in the form of a
-      matrix or as a list of vectors in `\RR^2`.
+      matrix or as a list of vectors in `\RR^3`.
 
     - ``method`` -- (optional) Either ``arctan`` or ``arccos``.
 
-    OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
+    OUTPUT: The normalized solid angle measure of the cone spanned by the row
+    vectors, as a decimal
 
     EXAMPLES:
 
