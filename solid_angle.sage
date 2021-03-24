@@ -445,7 +445,7 @@ def solid_angle_general(A, eps=1e-6, deg=100,
         True
 
     This example shows an estimation of the measure of the solid angle
-    spanned by vectors `\RR^5`, with different deg values.::
+    spanned by vectors `\RR^5`, with different ``deg`` values.::
 
         sage: A = [[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
         ....:            [0,0,-2,1,4],[0,0,0,0,1]]
