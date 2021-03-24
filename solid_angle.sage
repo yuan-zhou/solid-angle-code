@@ -679,7 +679,8 @@ def simplicial_subcones_decomposition(A):
 
 def composition_of_n_into_k_parts(n, k):
     r"""
-    Return a generator of the weak integer compositions of n into k parts.
+    Return a generator of the weak integer compositions of ``n``
+    into ``k`` parts.
 
     INPUT:
 
