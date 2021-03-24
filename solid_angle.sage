@@ -746,7 +746,7 @@ def is_M_alpha_posdef(A):
 
     - ``A`` -- matrix whose row vectors span a simplicial cone.
 
-    OUTPUT: ``Ture`` or ``False``.
+    OUTPUT: ``True`` or ``False``.
 
     EXAMPLES:
 
