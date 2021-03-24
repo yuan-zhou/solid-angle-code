@@ -457,7 +457,7 @@ def solid_angle_general(A, eps=1e-6, deg=100,
 
     This example demonstrates that the method works even when the input
     is a matrix that does not correspond to a simplicial cone. The expected
-    result 9based on the ``solid_angle_3d`` function) is ``0.3012081...``::
+    result based on the ``solid_angle_3d`` function) is ``0.3012081...``::
 
         sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
         sage: solid_angle_general(A)                           # abs tol 1e-15
