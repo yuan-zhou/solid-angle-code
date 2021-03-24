@@ -234,7 +234,7 @@ def solid_angle_simplicial_arctan_3d(A):
 def solid_angle_2d(A):
     r"""
     Return the normalized solid angle measure of the cone spanned by two
-    vectors in R^2.
+    vectors in `\RR^2`.
 
     INPUT:
 
