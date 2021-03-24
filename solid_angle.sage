@@ -242,12 +242,13 @@ def solid_angle_2d(A):
       of which we look for the solid angle. The input can be in the form of a
       matrix or as a list of vectors in `\RR^2`.
 
-    OUTPUT: The normalized solid angle spanned by the row vectors, as a decimal
+    OUTPUT: The normalized solid angle measure spanned by the row vectors, as
+    a decimal
 
     EXAMPLES:
 
-    The following three examples show the solid angles spanned by the given
-    two, three or four vectors in `\RR^2`, respectively::
+    The following three examples show the solid angle measures of the cones
+    spanned by the given two, three or four vectors in `\RR^2`, respectively::
 
         sage: logging.disable(logging.WARNING)
         sage: A = matrix([[2,3],[-3,-7]])
