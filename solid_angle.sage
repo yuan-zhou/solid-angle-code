@@ -393,7 +393,7 @@ def solid_angle_general(A, eps=1e-6, deg=100,
       sum, when `s_n-s_{n-1} < \epsilon`, we stop adding terms to the partial
       sum sequence.
 
-    - ``deg`` -- integer (default: `100`); deg is the maximum sum of the
+    - ``deg`` -- integer (default: `100`); ``deg`` is the maximum sum of the
       powers of the `\alpha_{ij}`'s in the summation (i.e. it is the maximum
       sum of the terms in the multiexponent.)
 
