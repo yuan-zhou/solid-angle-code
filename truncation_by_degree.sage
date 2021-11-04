@@ -380,12 +380,21 @@ def line_of_best_fit_deg_delta(A, t=6, color="pink"):
     - `m` is the slope of the line of best fit
     - `b` is the y-intercept of the line of best fit
     - plot of the relation (log(delta), truncation degree) given in L
+
+    ..NOTE::
+
+        Compare the slope of the line of best fite with`2/lambda` where
+        lambda is the minimum eigenvalue of the associated matrix of A.
     """
     list = []
-    for (i, j) in L:
-        list_ij = [log(i, 10), j]
-        print(list_ij)
-        list.append(list_ij)
+    T = truncation_deg_list(A, t=t)
+    for i in range(t):
+        if T[i][1] == 0:
+            continue
+        else:
+            list_ij = [log(T[i][0], 10), T[i][1]]
+            print(list_ij)
+            list.append(list_ij)
     var('m,b')
     model(x) = m*x+b
     print(find_fit(list, model))
