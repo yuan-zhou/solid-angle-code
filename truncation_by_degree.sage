@@ -364,7 +364,7 @@ def truncation_deg_list(A, t=6):
 #         Useful Functions
 # **********************************************************
 
-def line_of_best_fit_deg_delta(L, color="pink"):
+def line_of_best_fit_deg_delta(A, t=6, color="pink"):
     r"""
     Determines the line of best fit for the relation of log(delta)
     where delta is the allowable error, and the truncation degree.
