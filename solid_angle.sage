@@ -376,8 +376,8 @@ def solid_angle_3d(A, method="arctan"):
 # **********************************************************
 #      Main function of solid angle in higher dimensions
 # **********************************************************
-def solid_angle_general(A, eps=1e-6, deg=100,
-                        simplicial=None, space="ambient"):
+def solid_angle_general(A, eps=1e-9, deg=100,
+                        simplicial=None, space="ambient", tridiag=False):
     r"""
     Return an estimate of the normalized solid angle measure of the
     cone spanned by the row vectors of the given matrix ``A``,
@@ -388,10 +388,11 @@ def solid_angle_general(A, eps=1e-6, deg=100,
     - ``A`` -- a matrix or a list that is convertible to a matrix; the row
       vectors of ``A`` span the cone for which we compute its solid angle.
 
-    - ``eps`` -- positive real number (default: ``1e-6``); this parameter
-      is used to determine when the summation stops. In terms of the partial
-      sum, when `s_n-s_{n-1} < \epsilon`, we stop adding terms to the partial
-      sum sequence.
+    - ``eps`` -- positive real number (default: ``1e-6``); this parameter is
+      for the use of developers for testing. It is used to determine when the
+      summation stops. In terms of the partial sum, when
+      `s_n-s_{n-1} < \epsilon`, we stop adding terms to the partial sum
+      sequence.
 
     - ``deg`` -- integer (default: `100`); ``deg`` is the maximum sum of the
       powers of the `\alpha_{ij}`'s in the summation (i.e. it is the maximum
@@ -403,6 +404,9 @@ def solid_angle_general(A, eps=1e-6, deg=100,
 
     - ``space`` -- either "ambient" (by default) or "affine", indicating with
       respect to which space the solid angle of the cone is considered.
+
+    - ``tridiag`` -- either "False" (by default) or "True". One can set this
+    parameter to True when the associated matrix is known to be tridiagonal.
 
     OUTPUT:
 
@@ -417,7 +421,7 @@ def solid_angle_general(A, eps=1e-6, deg=100,
 
         sage: logging.disable(logging.INFO)
         sage: A = matrix([[1,0],[-1,-1]])
-        sage: solid_angle_general(A, eps=1e-9, simplicial=True) # abs tol 2e-9
+        sage: solid_angle_general(A, simplicial=True) # abs tol 2e-9
         0.375
 
     This example shows that when the vectors are linearly dependent,
@@ -430,16 +434,16 @@ def solid_angle_general(A, eps=1e-6, deg=100,
 
     In contrast, when considered in the affine space, the solid angle is 1::
 
-        sage: solid_angle_general(A, eps=1e-16, space="affine") # abs tol 1e-15
+        sage: solid_angle_general(A, space="affine") # abs tol 1e-8
         1
 
     This example shows the measure of the solid angle spanned by
     the vectors ``[2, sqrt(2), 3], [-1, 1, 2]``, and ``[-3, 0, 5/4]``, with
-    ``deg`` set to ``20`` and ``eps`` set to ``1e-6``. The relative error
-    compared to value ``0.01183`` obtained by the arctan formula is <0.5%.::
+    ``deg`` set to ``20``. The relative error compared to value ``0.01183``
+    obtained by the arctan formula is <0.5%.::
 
         sage: A = matrix([[2, sqrt(2), 3], [-1, 1, 2], [-3, 0, 5/4]])
-        sage: a = solid_angle_general(A, deg=20, eps=1e-6)
+        sage: a = solid_angle_general(A, deg=20)
         sage: b = solid_angle_3d(A)
         sage: abs(a-b)/b < 0.005
         True
@@ -461,7 +465,7 @@ def solid_angle_general(A, eps=1e-6, deg=100,
 
         sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
         sage: solid_angle_general(A)                           # abs tol 1e-15
-        0.3012056062147818
+        0.3012081888174261
 
     This example illustrates that when the input matrix has an
     associated matrix that is not positive definite, a warning appears::
@@ -512,8 +516,8 @@ def solid_angle_general(A, eps=1e-6, deg=100,
         This function uses the formula given in Ribando's
         2006 paper entitled "Measuring Solid Angles Beyond
         Dimension Three." More specifically, it is a truncated
-        form of the multi-variate power series given in Theorem
-        2.2.
+        form of the multi-variate hypergeometric series given in
+        Theorem 2.2.
 
         In Gourion and Seeger's 2010 paper entitled "Deterministic
         and stochastic methods for computing volumetric moduli of
@@ -532,41 +536,62 @@ def solid_angle_general(A, eps=1e-6, deg=100,
             logging.warning("Associated matrix NOT positive definite, "
                             "series NOT converge")
         d = A.nrows()
+        if d == 1:
+            return RDF(0.5)
         v = matrix(RDF, [A[i]/A[i].norm() for i in range(d)])
         da = int(d * (d-1) / 2)
         const = sqrt((v * v.transpose()).determinant()) / (RDF(4*pi) ** (d/2))
-        alpha = [0] * da
-        for i in range(d - 1):
-            for j in range(i + 1, d):
-                k = (2*d - i - 1) * i/2 + j - i - 1
-                alpha[k] = v[i] * v[j]
-        partial_sum = 0
-        for n in range(deg + 1):
-            sum_deg_n = 0
-            for a in composition_of_n_into_k_parts(n, da):
-                alphatoa = 1
-                for k in range(da):
-                    alphatoa = alpha[k] ** a[k] * alphatoa
+        if tridiag is True:
+            beta = [A[i] * A[i+1] / (A[i].norm()*A[i+1].norm()) for i
+                    in range(d-1)]
+            partial_sum = 0
+            for n in range(deg+1):
+                sum_deg_n = 0
+                for b in composition_of_n_into_k_parts(n, d-1):
+                    betatob = prod([beta[k]**b[k] for k in range(d-1)])
+                    coef = (-2)**(sum(b)) / prod([factorial(b[k]) for k
+                                                 in range(d-1)])
+                    coef *= gamma(0.5*(b[0]+1))
+                    for i in range(d-2):
+                        coef *= gamma(0.5*(b[i]+b[i+1]+1))
+                    coef *= gamma(0.5*(b[d-2]+1))
+                    sum_deg_n += coef * betatob
+                partial_sum += sum_deg_n
+                if abs(const * sum_deg_n) < eps:
+                    break
+        else:
+            alpha = [0] * da
+            for i in range(d - 1):
+                for j in range(i + 1, d):
+                    k = (2*d - i - 1) * i/2 + j - i - 1
+                    alpha[k] = v[i] * v[j]
+            partial_sum = 0
+            for n in range(deg + 1):
+                sum_deg_n = 0
+                for a in composition_of_n_into_k_parts(n, da):
+                    alphatoa = 1
+                    for k in range(da):
+                        alphatoa = alpha[k] ** a[k] * alphatoa
+                        if alphatoa == 0:
+                            break
                     if alphatoa == 0:
-                        break
-                if alphatoa == 0:
-                    continue
-                t = (-2) ** (sum(a))
-                fact_denom = prod([factorial(a[k]) for k in range(da)])
-                coef = t / fact_denom
-                for i in range(d):
-                    s_i = 0
-                    for j in range(d):
-                        if j != i:
-                            m_1 = max(i, j)
-                            m_0 = min(i, j)
-                            k = (2*d - m_0 - 1) * m_0 / 2 + m_1 - m_0 - 1
-                            s_i += a[k]
-                    coef = coef * gamma(0.5 * (s_i + 1))
-                sum_deg_n += coef * alphatoa
-            partial_sum += sum_deg_n
-            if abs(const * sum_deg_n) < eps:
-                break
+                        continue
+                    t = (-2) ** (sum(a))
+                    fact_denom = prod([factorial(a[k]) for k in range(da)])
+                    coef = t / fact_denom
+                    for i in range(d):
+                        s_i = 0
+                        for j in range(d):
+                            if j != i:
+                                m_1 = max(i, j)
+                                m_0 = min(i, j)
+                                k = (2*d - m_0 - 1) * m_0 / 2 + m_1 - m_0 - 1
+                                s_i += a[k]
+                        coef = coef * gamma(0.5 * (s_i + 1))
+                    sum_deg_n += coef * alphatoa
+                partial_sum += sum_deg_n
+                if abs(const * sum_deg_n) < eps:
+                    break
         return RDF(const * (partial_sum))
     else:
         A_list = simplicial_subcones_decomposition(A)
@@ -659,6 +684,26 @@ def simplicial_subcones_decomposition(A):
         [-3  0  5  0]  [-3  0  5  0]  [-4  0  0  0]
         [ 0  0  1  0], [-4  0  0  0], [ 0  0 -4  0]
         ]
+
+    TESTS:
+
+    Below we show that the function does not determine a minimal description
+    of the cone of interest. Note that the cone spanned by vectors [0,1,0],
+    [0,1,1], and [0,0,1] is the cone spanned by vectors [0,1,0], and [0,0,1].::
+
+        sage: A=matrix([[0,1,0],[0,0,1]])
+        sage: simplicial_subcones_decomposition(A)
+        [
+        [0 1 0]
+        [0 0 1]
+        ]
+
+        sage: A = matrix([[0,1,0],[0,1,1],[0,0,1]])
+        sage: simplicial_subcones_decomposition(A)
+        [
+        [0 1 0]  [0 1 1]
+        [0 1 1], [0 0 1]
+        ]
     """
     if not hasattr(A, 'nrows'):
         A = matrix(A)
@@ -725,8 +770,8 @@ def composition_of_n_into_k_parts(n, k):
     .. NOTE::
 
         This function is used to develop a truncation form for the
-        multivariate power series `T_{\alpha}` in Ribando's paper
-        "Measuring solid angles beyond dimension three."
+        multivariate hypergeometric series `T_{\alpha}` in Ribando's
+        paper "Measuring solid angles beyond dimension three."
     """
     if k == 1:
         yield [n]
@@ -788,11 +833,11 @@ def is_M_alpha_posdef(A):
         where `\alpha_{ij}` is the normal vector of the dot product of the
         i-th and the j-th rows of the given matrix ``A``.
 
-        This function is used as a test for the convergence of
-        Ribando's power series for the solid angle of a cone. By
-        Corollary 3.2 in Ribando's paper "Measuring solid angles
-        beyond dimension three," the series converges if and only if
-        the associated matrix is positive definite.
+        This function is used as a test for the convergence of Ribando's
+        hypergeometric series for the solid angle of a cone. By Corollary 3.2
+        in Ribando's paper "Measuring solid angles beyond dimension three,"
+        the series converges if and only if the associated matrix is positive
+        definite.
     """
     d = A.nrows()
     M_exact = A * A.transpose()  # unnormalized matrix with diag entries not 1
