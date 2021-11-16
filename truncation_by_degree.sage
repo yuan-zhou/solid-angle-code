@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 load("~/ma611-code/solid_angle.sage")
 load("~/ma611-code/decomp.sage")
+=======
+load("solid_angle.sage")
+load("decomp.sage")
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
 
 # In the following, we investigate the error of the M-th order
 # truncation of Ribando's solid angle measure hypergeometric
@@ -60,7 +65,11 @@ def truncation_deg_list_2d(A, t=6):
     for a simplicial two-dimensional cone::
 
         sage: R = matrix([[4,9],[-1,2]])
+<<<<<<< HEAD
         sage: truncation_deg_list_2d(R, 8) # optional
+=======
+        sage: truncation_deg_list_2d(R, 8)
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 0],
         [1.00000000000000e-2, 3],
@@ -181,7 +190,11 @@ def truncation_deg_list(A, t=6):
     series at degree at least 99::
 
         sage: B = matrix([[0,1,-2],[1,0,17],[39/34, -1, -1/2]])
+<<<<<<< HEAD
         sage: truncation_deg_list(B, t=5) # long time (3.95 s)
+=======
+        sage: truncation_deg_list(B, t=5)
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 10],
         [1.00000000000000e-2, 38],
@@ -197,7 +210,11 @@ def truncation_deg_list(A, t=6):
 
         sage: C1 = matrix([[1,-1,0],[2,1,1],[-1,0,0]])
         sage: C = list(generate_cones_decomposition(C1))
+<<<<<<< HEAD
         sage: truncation_deg_list(C[0][0], t=7) # never tested (194 s)
+=======
+        sage: truncation_deg_list(C[0][0], t=7)
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 0],
         [1.00000000000000e-2, 0],
@@ -207,7 +224,11 @@ def truncation_deg_list(A, t=6):
         [1.00000000000000e-6, 471],
         [1.00000000000000e-7, 625]]
 
+<<<<<<< HEAD
         sage: truncation_deg_list(C[1][0], t=7) # long time (6.47 s)
+=======
+        sage: truncation_deg_list(C[1][0], t=7)
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 8],
         [1.00000000000000e-2, 29],
@@ -222,7 +243,11 @@ def truncation_deg_list(A, t=6):
 
         sage: Z_1 = matrix([[-1,-1,-1],[2,2,1],[2,1,1]])
         sage: Z = list(generate_cones_decomposition(Z_1))
+<<<<<<< HEAD
         sage: truncation_deg_list(Z[0][0]) # never tested (132 s)
+=======
+        sage: truncation_deg_list(Z[0][0])
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 4],
         [1.00000000000000e-2, 42],
@@ -231,7 +256,11 @@ def truncation_deg_list(A, t=6):
         [1.00000000000000e-5, 197],
         [1.00000000000000e-6, 252]]
 
+<<<<<<< HEAD
         sage: truncation_deg_list(Z[1][0]) # long time (50 s)
+=======
+        sage: truncation_deg_list(Z[1][0])
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 23],
         [1.00000000000000e-2, 82],
@@ -242,6 +271,7 @@ def truncation_deg_list(A, t=6):
 
 
     This example illustrates how one can use the function to determine
+<<<<<<< HEAD
     the truncation degree for a specific delta::
 
         sage: A=matrix([[1,0,1],[-1,0,0],[0,1,2]])
@@ -253,13 +283,25 @@ def truncation_deg_list(A, t=6):
 
         sage: A = matrix([[13,4,-10],[1,-12,0],[0,-4,-2]])
         sage: truncation_deg_list(A, t=6)[6] # long time (7.16 s)
+=======
+    the truncation degree for a specific delta. Here, we consider the
+    truncation degree so that the truncation is within 1e-6 of the actual
+    measure.::
+
+        sage: A = matrix([[13,4,-10],[1,-12,0],[0,-4,-2]])
+        sage: truncation_deg_list(A, t=6)[6]
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [1.00000000000000e-6, 62]
 
     In the following, we consider truncation degrees for various margins of
     error ranging from 1e-8 to 1e-1::
 
         sage: D = matrix([[4,-1,1],[0,0,4],[6,1,0]])
+<<<<<<< HEAD
         sage: truncation_deg_list(D, t=8) # long time (7.47 s)
+=======
+        sage: truncation_deg_list(D, t=8)
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         [[1.00000000000000e0, 0],
         [1.00000000000000e-1, 0],
         [1.00000000000000e-2, 4],
@@ -369,13 +411,18 @@ def truncation_deg_list(A, t=6):
 #         Useful Functions
 # **********************************************************
 
+<<<<<<< HEAD
 def line_of_best_fit_deg_delta(A, t=6, color="pink", plot_relation=False):
+=======
+def line_of_best_fit_deg_delta(A, t=6, color="pink"):
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
     r"""
     Determines the line of best fit for the relation of log(delta)
     where delta is the allowable error, and the truncation degree.
 
     INPUT:
 
+<<<<<<< HEAD
     - ``A`` -- matrix; 3x3 matrix corresponding to the simplicial
                 three-dimensional cone of interest
     - ``t`` - integer; corresponds to the allowable error, which
@@ -383,11 +430,17 @@ def line_of_best_fit_deg_delta(A, t=6, color="pink", plot_relation=False):
     -``plot_relation`` - (optional) True or False; when set to True,
                          the function outputs a plot of the relation
                          in semilogx scale.
+=======
+    - ``L`` -- list of pairs of the form (delta, truncation degree) which
+    can be obtained via the truncation_deg_list functions above.
+
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
 
     OUTPUT:
 
     - `m` is the slope of the line of best fit
     - `b` is the y-intercept of the line of best fit
+<<<<<<< HEAD
     - plot of the relation (log(delta), truncation degree)
 
     EXAMPLES:
@@ -427,11 +480,22 @@ def line_of_best_fit_deg_delta(A, t=6, color="pink", plot_relation=False):
     ..NOTE::
 
         Compare the slope of the line of best fit with`2/lambda` where
+=======
+    - plot of the relation (log(delta), truncation degree) given in L
+
+    ..NOTE::
+
+        Compare the slope of the line of best fite with`2/lambda` where
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         lambda is the minimum eigenvalue of the associated matrix of A.
     """
     list = []
     T = truncation_deg_list(A, t=t)
+<<<<<<< HEAD
     for i in range(t+1):
+=======
+    for i in range(t):
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
         if T[i][1] == 0:
             continue
         else:
@@ -440,16 +504,23 @@ def line_of_best_fit_deg_delta(A, t=6, color="pink", plot_relation=False):
             list.append(list_ij)
     var('m,b')
     model(x) = m*x+b
+<<<<<<< HEAD
     if plot_relation is True:
         print(find_fit(list, model))
         return list_plot(list, axes_labels=['log(error)', 'truncation-deg'],
                          color=color)
     else:
         print(find_fit(list, model))
+=======
+    print(find_fit(list, model))
+    return list_plot(list, axes_labels=['$log(error)$', '$truncation-deg$'],
+                     color=color)
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
 
 
 def min_eigenval_assoc_matrix(A):
     r"""
+<<<<<<< HEAD
     Return the minimum eigenvalue of the associated matrix of the cone
     corresponding to the matrix ``A``.
 
@@ -499,6 +570,9 @@ def min_eigenval_assoc_matrix(A):
         `(b_1/(1-lambda), ..., b_{n-1}/(1-lambda))` lies on the boundary of
         the domain of convergence of Ribando's solid angle formula. Here,
         `lambda` is the minimum eigenvalue of the associated matrix.
+=======
+    Gives the minimum eigenvalue of the associated matrix of A.
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395
     """
     d = A.nrows()
     M_exact = A * A.transpose()
@@ -510,6 +584,7 @@ def min_eigenval_assoc_matrix(A):
                 M_exact[i, j] = - abs(M_exact[i, j])
             M[i, j] = RDF(M_exact[i, j] / (vnorm[i] * vnorm[j]))
     return min(M.eigenvalues())
+<<<<<<< HEAD
 
 
 def onlydeg(A, deg1=0, deg2=100, tridiag=None):
@@ -643,3 +718,5 @@ def onlydeg(A, deg1=0, deg2=100, tridiag=None):
         a_n = [n, const * sum_deg_n, const*partial_sum]
         logging.info(a_n)
     return(const*partial_sum)
+=======
+>>>>>>> 02634cdbee8eae0ea9ac4af8df1d4251c07e1395

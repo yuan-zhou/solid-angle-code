@@ -621,7 +621,6 @@ def solid_angle_measure(A, eps=1e-6, deg=100, simplicial=False,
             sum_sim.append(a_i)
         return sum(sum_sim)
 
-
 def generate_tridiag_decomposition(A, h=None, w=None, s=1):
     r"""
     Return a a list of pairs corresponding to the decomposition of the cone
