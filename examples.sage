@@ -18,7 +18,7 @@ def test_example(C):
         sage: solid_angle_measure(B2) # time 5.37 ms
         0.12500031973472642
 
-    A cone formed by the hyperplanes in the Coxeter arrangement `B_2`.
+    A cone formed by the hyperplanes in the Coxeter arrangement `B_3`.
     The exact measure is `1/48=0.020833333333333332`::
 
         sage: B3=[[1,0,0],[1,1,0],[1,1,1]]
@@ -26,7 +26,7 @@ def test_example(C):
         0.020833224835604375
 
     A cone formed by the hyperplanes in the Coxeter arrangement `B_4`. The
-    exact measure is `1/48=0.020833333333333332`::
+    exact measure is `1/384=0.0026041666666666665`::
 
         sage: B4=[[1,0,0,0],[1,1,0,0],[1,1,1,0],[1,1,1,1]]
         sage: solid_angle_measure(B4, deg=15) # 1.438 s
