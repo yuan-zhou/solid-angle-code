@@ -335,3 +335,69 @@ def reduced_group_facet_polytope(q=7, f=6, map_indices=[0,1,3,4], keep_indices=[
         reduced_vertices.append(new_vertex)
     reduced_polytope = Polyhedron(vertices=reduced_vertices, base_ring=base_ring, backend=backend)
     return reduced_polytope
+
+
+def blocker_polyhedron(q=7, f=6, base_ring=QQ, backend='ppl', verbose=False):
+    r"""
+    Return the blocker of P(q,f) in dimension q-2-|H|
+    where H is the set of halves, i.e., the set of positive integers
+    ``h`` less than `q` such that 2*h is congruent to f modulo q.
+
+    INPUT:
+
+    - ``q`` -- positive integer (default: ``7``); this parameter is the
+    cardinality of the cylic group of interest
+
+    - ``f`` -- positive integer (default: ``6``); the target group element
+    of the cyclic group of order ``q``
+
+    - ``base_ring`` -- a field (default: ``QQ``); this parameter is
+      passed on to the sage polyhedron function when constructing the
+      blocker
+
+    - ``backend`` -- a backend (default: `ppl`); this parameter is
+      passed on to the sage polyhedron function when constructing the
+      blocker
+
+    OUTPUT:
+
+    - a polyhedron
+
+    EXAMPLES:
+
+    This example shows the full-dimensional blocker of Pi(7,6) in
+    dimension 4::
+
+        sage: B = blocker_polyhedron(q=7, f=6, base_ring=QQ, backend='ppl')
+        sage: B.ambient_dim()
+        4
+        sage: B.Vrepresentation()
+        <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
+        sage: P.Vrepresentation()
+        (A ray in the direction (0, 0, 0, 1),
+        A ray in the direction (0, 0, 1, 0),
+        A ray in the direction (0, 1, 0, 0),
+        A ray in the direction (1, 0, 0, 0),
+        A vertex at (1/6, 1/3, 2/3, 5/6),
+        A vertex at (2/5, 4/5, 1/5, 3/5),
+        A vertex at (3/4, 5/8, 3/8, 1/4),
+        A vertex at (3/4, 1/3, 2/3, 1/4))
+
+    This example shows the blocker of P(5,4)::
+
+        sage: B = blocker_polyhedron(q=5, f=4, base_ring=QQ, backend='ppl')
+        sage: B.Vrepresentation()
+        (A ray in the direction (0, 1),
+        A ray in the direction (1, 0),
+        A vertex at (1/4, 3/4),
+        A vertex at (2/3, 1/3))
+
+    .. NOTE::
+
+        The blocker of P(q,f) is the Minkowski sum of Pi(q,f) and the nonnegative orthant
+        in th ambient dimension of Pi(q,f).
+    """
+    P = group_facet_polytope(q, f, base_ring, backend, verbose)
+    nonneg_orthant = Polyhedron(rays = identity_matrix(P.ambient_dim()).rows(), base_ring=base_ring, backend=backend)
+    blocker = P + nonneg_orthant
+    return blocker
