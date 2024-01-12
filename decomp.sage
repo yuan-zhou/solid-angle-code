@@ -623,3 +623,115 @@ def generate_cones_decomposition(A, h=None, w=None, s=1, tridiag=False):
                     for vs in generate_cones_decomposition(u, h=0, w=ww, s=si,
                                                            tridiag=tridiag):
                         yield vs
+
+
+def generate_tridiag_cones_decomposition(A, h=None, w=None, s=1):
+    r"""
+    Return a a list of pairs corresponding to the decomposition of the cone
+    into a finite family of cones, each with a solid angle that is
+    computable via the Ribando normalized solid angle formula.
+
+    INPUT:
+
+    - ``A`` -- A matrix where the row vectors represent the extreme
+    rays/vectors of the cone we wish to decompose.
+
+    - ``h`` -- integer; (optional) ``h`` is the index of the row vector
+    in the cone matrix which determines an edge of each cone in the
+    decomposition.
+
+    - ``w`` -- matrix; (optional) ``w`` is a matrix with vectors that we
+    insist on being in each cone of the decomposition. That is, `w` deter-
+    mines a face that is in each of the cones in the decompositon.
+    Unlike the parameter `h`, this parameter can correspond to an arbitrary
+    subcone and does not have to relate to the input matrix.
+
+    OUTPUT:
+
+    - a list containing pairs `(C_sigma, s)` where `C_sigma` is a
+    cone in the decomposition of the cone corresponding to `A` and `s` is
+    either 1 or -1, depending on the sign of the cone based on Brion-Vergne
+    decomposition. Each `C_sigma` has a tridiagonal associated matrix.
+
+    EXAMPLES:
+
+    This function is similar to generate_cones_decomposition, however it
+    continues to decompose until all the cones have tridiagonal associated
+    matrices, unlike generate_cones_decomposition which stops when the
+    associated matrix is positive definite. This is demonstrated below::
+
+        sage: A = matrix([[-1,-33,2,-1,-2],[-1,0,1,0,4],[-1,0,3,-1,-8],[4,-1,0,-4,1],[1,1,7,0,3]])
+        sage: L = list(generate_cones_decomposition(A))
+        sage: len(L)
+        11
+        sage: vtv(L[5][0])
+        [                 1.0  -0.7620634755325443                  0.0                  0.0                  0.0]
+[ -0.7620634755325443                  1.0  0.03705044586012998  -0.1584236068762679   0.5510064338758125]
+[                 0.0  0.03705044586012998                  1.0  0.16823409295260094 -0.06028966215690933]
+[                 0.0  -0.1584236068762679  0.16823409295260094                  1.0 0.015864940226165674]
+[                 0.0   0.5510064338758125 -0.06028966215690933 0.015864940226165674                  1.0]
+
+        sage: r = list(generate_tridiag_cones_decomposition(A))
+        sage: len(r)
+        18
+    """
+    if A.nrows() <= 2:
+        if w is None:
+            yield((A, s))
+        else:
+            yield((w.stack(A), s))
+    else:
+        n = A.nrows()
+        if h is None:
+            max_num_orth = -1
+            for i in range(n):
+                num_orth = [A[i]*A[j] for j in range(n)].count(0)
+                if num_orth > max_num_orth:
+                    max_num_orth = num_orth
+                    h = i
+        if w is None:
+            ww = matrix(A[h])
+        else:
+            ww = w.stack(A[h])
+        num_orth = [A[h]*A[j] for j in range(n)].count(0)
+        if num_orth == n-1:
+            u = A.delete_rows([h])
+            for vs in generate_tridiag_cones_decomposition(u, h=None, w=ww, s=s):
+                yield vs
+        else:
+            for i in range(n):
+                if (i == h) or (A[i]*A[h] == 0):
+                    continue
+                u = matrix(A[i])
+                if A[i]*A[h] > 0:
+                    si = s
+                    for j in range(i):
+                        if (j != h) and (A[j]*A[h] > 0):
+                            si = -si
+                    for k in range(n):
+                        if (k == h) or (k == i):
+                            continue
+                        if (k < i) and (A[k]*A[h] > 0):
+                            eik = -1
+                        else:
+                            eik = 1
+                        projvk = A[k]-(A[k]*A[h])/(A[i]*A[h]) * A[i]
+                        u = u.stack(eik * projvk)
+                    for vs in generate_tridiag_cones_decomposition(u, h=0, w=ww, s=si):
+                        yield vs
+                elif A[i]*A[h] < 0:
+                    si = s
+                    for j in range(i+1, n):
+                        if (j != h) and (A[j]*A[h] < 0):
+                            si = -si
+                    for k in range(n):
+                        if (k == h) or (k == i):
+                            continue
+                        if (k > i) and (A[k]*A[h] < 0):
+                            eik = -1
+                        else:
+                            eik = 1
+                        projvk = A[k]-(A[k]*A[h])/(A[i]*A[h]) * A[i]
+                        u = u.stack(eik * projvk)
+                    for vs in generate_tridiag_cones_decomposition(u, h=0, w=ww, s=si):
+                        yield vs
