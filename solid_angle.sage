@@ -551,33 +551,44 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
         return base_ring(1/2**d)
     alpha_powers = [{0: 1} for k in range(number_nonzero_parts)]
     partial_sum = (pi.n() ** (d/2))
-    for n in range(deg + 1):
+    t = 1
+    Q = [[1] + [0] * (number_nonzero_parts - 1)]
+    prev_sum_deg_n = partial_sum
+    for n in range(1, deg + 1):
+        for k in range(number_nonzero_parts):
+            alpha_powers[k][n] = alpha_powers[k][n-1] * alpha[k]
+        t *= (-2)
         sum_deg_n = 0
-        for a in composition_of_n_into_k_parts(n, da):
-            alphatoa = 1
-            for k in range(da):
-                alphatoa = alpha[k] ** a[k] * alphatoa
-                if alphatoa == 0:
-                    break
-            if alphatoa == 0:
-                continue
-            t = (-2) ** (sum(a))
-            fact_denom = prod([factorial(a[k]) for k in range(da)])
-            coef = t / fact_denom
-            for i in range(d):
-                s_i = 0
-                for j in range(d):
-                    if j != i:
-                        m_1 = max(i, j)
-                        m_0 = min(i, j)
-                        k = (2*d - m_0 - 1) * m_0 / 2 + m_1 - m_0 - 1
-                        s_i += a[k]
-                coef = coef * gamma(0.5 * (s_i + 1))
-            sum_deg_n += coef * alphatoa
+        P = Q # set of partitions f n into number_nonzero_parts
+        for ps in P:
+            sum_partition = 0
+            fact_denom = prod([factorial(h) for h in ps])
+            coef_0 = base_ring(t / fact_denom)
+            comps_seq = Arrangements(ps, number_nonzero_parts) # all possible arrangements of ps
+            for comps in comps_seq:
+                alphatoa = 1
+                cs = list(comps)
+                for k in range(number_nonzero_parts):
+                    alphatoa *= alpha_powers[k][cs[k]]
+                S_list = [0] * d
+                for i in range(number_nonzero_parts):
+                    s_i = cs[i]
+                    s_i_inds = nonzero_inds[i]
+                    S_list[s_i_inds[0]] += s_i
+                    S_list[s_i_inds[1]] += s_i
+                coef = prod([(base_ring(0.5 * (gi + 1))).gamma() for gi in S_list])
+                sum_partition += coef_0 * coef * alphatoa
+            sum_deg_n += sum_partition
         partial_sum += sum_deg_n
-        if abs(const * sum_deg_n) < eps:
-            break
-    return RDF(const * (partial_sum))
+        if verbose == True:
+            print([n, (const * sum_deg_n), (const * partial_sum), (const * 0.5 * (abs(sum_deg_n) + abs(prev_sum_deg_n)))])
+        if ((const * 0.5 * (abs(sum_deg_n) + abs(prev_sum_deg_n))) < eps):
+            if (const * (partial_sum)) > 0:
+                break
+        prev_sum_deg_n = sum_deg_n
+        Q = partitions_iter(P, number_nonzero_parts)
+    print (const * (partial_sum))
+    return base_ring(const * (partial_sum))
 
 
 # **********************************************************
