@@ -550,7 +550,7 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
     if number_nonzero_parts == 0:
         return base_ring(1/2**d)
     alpha_powers = [{0: 1} for k in range(number_nonzero_parts)]
-    partial_sum = 0
+    partial_sum = (pi.n() ** (d/2))
     for n in range(deg + 1):
         sum_deg_n = 0
         for a in composition_of_n_into_k_parts(n, da):
