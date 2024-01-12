@@ -529,13 +529,27 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
     if d == 1:
         return base_ring(1/2)
     v = matrix([A[i]/A[i].norm() for i in range(d)]) # leave as norm, otherwise lose 0s in vtv
-    da = int(d * (d-1) / 2)
-    const = sqrt((v * v.transpose()).determinant()) / (RDF(4*pi) ** (d/2))
-    alpha = [0] * da
-    for i in range(d - 1):
-        for j in range(i + 1, d):
-            k = (2*d - i - 1) * i/2 + j - i - 1
-            alpha[k] = v[i] * v[j]
+    vtv = v * v.transpose()
+    const = RDF(sqrt((vtv).determinant()) / ((4*pi.n()) ** (d/2)))
+    alpha = []
+    nonzero_inds = []
+    if tridiag is True: # only check entries with indices (i,i+1)
+        for i in range(d - 1):
+            dot_prod = vtv[i][i+1]
+            if dot_prod != 0:
+                alpha += [base_ring(dot_prod)] # now we change to RDF so we dont carry symbolic
+                nonzero_inds += [(i, i+1)]
+    else:
+        for i in range(d - 1):
+            for j in range(i + 1, d):
+                dot_prod = vtv[i][j]
+                if dot_prod != 0:
+                    alpha += [base_ring(dot_prod)] # now we change to RDF so we dont carry symbolic
+                    nonzero_inds += [(i,j)]
+    number_nonzero_parts = len(alpha)
+    if number_nonzero_parts == 0:
+        return base_ring(1/2**d)
+    alpha_powers = [{0: 1} for k in range(number_nonzero_parts)]
     partial_sum = 0
     for n in range(deg + 1):
         sum_deg_n = 0
