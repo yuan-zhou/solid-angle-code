@@ -167,6 +167,8 @@ def triangulation_into_simplicial_cone_matrices(P, decompose_to_tridiag=False):
     # Create pointed cone with same solid angle
     pointed_cone = pointed_cone_from_projecting_out_lineality(P)
     rays = matrix(pointed_cone.rays_list())
+    if rays.nrows() <= rays.ncols():
+        return [rays]
 
     # Format for macaulay2 to use Topcom for triangulation
     macaulay2('loadPackage "Topcom"')
