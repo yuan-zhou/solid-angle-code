@@ -661,65 +661,76 @@ def simplicial_subcones_decomposition(A):
         return matrices
 
 
-def composition_of_n_into_k_parts(n, k):
+def partitions_iter(c, k):
     r"""
-    Return a generator of the weak integer compositions of ``n``
-    into ``k`` parts.
+    Return a set of nonincreasing partitions of ``p+1`` into ``k`` parts, where
+    ``p`` is the sum of the entries of any partition in the list ``c``.
 
     INPUT:
 
-    - ``n`` -- integer; ``n`` is the integer that we want to find the weak
-      compositions of.
+    - ``c`` -- list; a list of nonincreasing partitions of a fixed integer.
 
     - ``k`` -- integer; ``k`` is the positive integer giving the number of
-      parts we want in a composition of n.
+      parts we want in the partition.
 
 
     OUTPUT:
 
-    - a generator object containing the ``k`` tuples that are weak compositions
-      of ``n``.
+    - a set containing ``k`` tuples that are nonincreasing partitions
+      of ``p+1`` where any element in ``c`` is a partition of
+      ``p``, which can be obtained by increasing an element in a partition
+      in ``c`` by 1 to obtain a partition of ``p+1`` while maintaining
+      nonincreasing order.
 
     EXAMPLES:
 
-    This example shows the weak compositions of `3` into `2` parts::
+    A partition of 1 into 3 parts is [1,0,0]. The partitions of
+    2 into 3 parts are given as follows::
 
-        sage: list(composition_of_n_into_k_parts(3,2))
-        [[0, 3], [1, 2], [2, 1], [3, 0]]
+        sage: partitions_iter([[1,0,0]], 3)
+        {(1, 1, 0), (2, 0, 0)}
 
-    This example illustrates how the function can be used to find the number of
-    the weak compositions of `11` into `2` parts::
+    The two partitions of 2 into three parts are [1,1,0] and
+    [2,0,0]. We can obtain the partitions of 4 into three parts
+    as follows::
 
-        sage: len(list(composition_of_n_into_k_parts(11,2)))
-        12
+        sage: P = partitions_iter([[1,1,0],[2,0,0]], 3)
+        sage: PP = partitions_iter(P, 3)
+        sage: PP
+        {(2, 1, 1), (2, 2, 0), (3, 1, 0), (4, 0, 0)}
 
-    This example shows that when `k=1`, the list returned has only the
-    entry ``[n]``::
 
-        sage: list(composition_of_n_into_k_parts(4,1))
-        [[4]]
+    This example shows that the output list of partitions is
+    not all of the partitions, but those that can be obtained
+    by increasing an entry in the given partitions by 1 and main-
+    taining nonincreasing order::
 
-    This example shows that when `n=0`, the list returned has only one
-    entry, a `k`-tuple of `0`'s::
-
-        sage: list(composition_of_n_into_k_parts(0,6))
-        [[0, 0, 0, 0, 0, 0]]
-
+        sage: P = partitions_iter([[2,1,0,0]], 4)
+        sage: P
+        {(2, 1, 1, 0), (2, 2, 0, 0), (3, 1, 0, 0)}
 
     .. NOTE::
 
         This function is used to develop a truncation form for the
-        multivariate power series `T_{\alpha}` in Ribando's paper
-        "Measuring solid angles beyond dimension three."
+        multivariate hypergeometric series `T_{\alpha}` in Ribando's
+        paper "Measuring solid angles beyond dimension three."
     """
-    if k == 1:
-        yield [n]
-    elif n == 0:
-        yield [0] * k
-    else:
-        for i in range(n+1):
-            for c in composition_of_n_into_k_parts(n-i, k-1):
-                yield [i]+c
+    X = set()
+    for v in c:
+        x = list(v)
+        x[0] += 1
+        X.add(tuple(x))
+        for i in range(1, k-1):
+            y = list(v)
+            if y[i]+1 >= y[i+1]:
+                if y[i]+1 <= y[i-1]:
+                    y[i] += 1
+                    X.add(tuple(y))
+        z = list(v)
+        if z[k-1]+1 <= z[k-2]:
+            z[k-1] += 1
+            X.add(tuple(z))
+    return X
 
 
 def is_M_alpha_posdef(A):
