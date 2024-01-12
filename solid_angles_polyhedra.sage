@@ -197,3 +197,141 @@ def group_facet_polytope(q=7, f=6, base_ring=QQ, backend='ppl', verbose=False):
     I = list(group_facet_polytope_ieqs(q, f))
     P = Polyhedron(eqns=E, ieqs=I, base_ring=base_ring, backend=backend)
     return P
+
+def reduced_group_facet_polytope(q=7, f=6, map_indices=[0,1,3,4], keep_indices=[0,1], base_ring=QQ, backend='ppl'):
+    r"""
+    Return the reduced group facet polytope Pi(q,f) in dimension (q-2-|H|)/2
+    where H is the set of halves, i.e., the set of positive integers
+    ``h`` less than `q` such that 2*h is congruent to f modulo q.
+
+    INPUT:
+
+    - ``q`` -- positive integer (default: ``7``); this parameter is the
+    cardinality of the cylic group of interest
+
+    - ``f`` -- positive integer (default: ``6``); the target group element
+    of the cyclic group of order ``q``
+
+    - ``map_indices`` -- list (default: ``[0,1,3,4]``); a list of indices
+    corresponding to the coordinates of the group facet polytope in q-1
+    space
+
+    - ``keep_indices`` -- list (default: ``[0,1]``); a subset of indices
+    of the coordinates to project onto for the reduced group facet polytope.
+    The list ``keep_indices`` should keep exactly one of i or j for every
+    pair (i,j) in ``map_indices`` such that (i+1) + (j+1) is congruent to
+    ``f`` modulo q
+
+    - ``base_ring`` -- a field (default: ``QQ``); this parameter is
+      passed on to the sage polyhedron function when constructing the
+      polytope
+
+    - ``backend`` -- a backend (default: `ppl`); this parameter is
+      passed on to the sage polyhedron function when constructing the
+      polytope
+
+    OUTPUT:
+
+    - a polyhedron
+
+    EXAMPLES:
+
+    This example shows the two-dimensional reduced group facet polytope Pi(7,6)
+    constructed in R^2 with coordinates in the rational field::
+
+        sage: P = reduced_group_facet_polytope(q=7, f=6, map_indices=[0,1,3,4], keep_indices=[0,1], base_ring=Q
+        ....: Q, backend='ppl')
+        sage: P.Vrepresentation()
+        (A vertex at (1/6, 1/3),
+        A vertex at (2/5, 4/5),
+        A vertex at (3/4, 5/8),
+        A vertex at (3/4, 1/3))
+
+    We could alternatively define the two-dimensional reduced group facet polytope Pi(7,6)
+    in terms of the index set [3,4], resulting in a rotation of P above::
+
+        sage: PP = reduced_group_facet_polytope(q=7, f=6, map_indices=[0,1,3,4], keep_indices=[3,4], base_ring=
+        ....: QQ, backend='ppl')
+        sage: PP.Vrepresentation()
+        (A vertex at (1/5, 3/5),
+        A vertex at (3/8, 1/4),
+        A vertex at (2/3, 5/6),
+        A vertex at (2/3, 1/4))
+
+    This example shows the reduction of the group facet polytope P(8,4)
+    to dimension 2, as well as how one can obtain the input parameter
+    for 'map_indices' from setting the verbosity of the group_facet_polytope
+    to True::
+
+        sage: P = group_facet_polytope(q=8, f=4, base_ring=QQ, backend='ppl', verbose=True)
+        map indices are [0, 2, 4, 6]
+        sage: P
+        A 2-dimensional polyhedron in QQ^4 defined as the convex hull of 4 vertices
+        sage: P.Vrepresentation()
+        (A vertex at (1/4, 3/4, 1/4, 3/4),
+        A vertex at (1/4, 3/4, 3/4, 1/4),
+        A vertex at (3/4, 1/4, 3/4, 1/4),
+        A vertex at (3/4, 1/4, 1/4, 3/4))
+        sage: PP = reduced_group_facet_polytope(q=8, f=4, map_indices=[0,2,4,6], keep_indices=[0,4], base_ring=
+        ....: QQ, backend='ppl')
+        sage: PP
+        A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
+        sage: PP.Vrepresentation()
+        (A vertex at (1/4, 1/4),
+        A vertex at (1/4, 3/4),
+        A vertex at (3/4, 1/4),
+        A vertex at (3/4, 3/4))
+
+    Here we consider a higher-dimensional case, Pi(9,6). The vertices are
+    (2/3, 5/6, 1/2, 1/6, 1/3, 1, 2/3, 1/3), (2/3, 1/3, 1/2, 2/3, 1/3, 1, 2/3, 1/3),
+    (1/6, 1/3, 1/2, 2/3, 5/6, 1, 2/3, 1/3), (1/3, 2/3, 1/2, 1/3, 2/3, 1, 1/3, 2/3),
+    (2/3, 1/3, 1/2, 2/6, 1/3, 1, 1/6, 5/6), (5/12, 5/6, 1/2, 1/6, 7/12, 1, 2/3, 1/3),
+    (1/6, 1/3, 1/2, 2/3, 5/6, 1, 5/12, 7/12), (2/3, 7/12, 1/2, 5/12, 1/3, 1, 1/6, 5/6).
+    For this polytope, H = {3} so we expect the ambient dimension of the polytope
+    to be 6::
+
+        sage: P = group_facet_polytope(9, 6, QQ, 'normaliz')
+        sage: P.ambient_dim()
+        6
+        sage: P.Vrepresentation()
+        (A vertex at (1/3, 2/3, 1/3, 2/3, 1/3, 2/3),
+        A vertex at (1/6, 1/3, 2/3, 5/6, 2/3, 1/3),
+        A vertex at (2/3, 1/3, 2/3, 1/3, 2/3, 1/3),
+        A vertex at (1/6, 1/3, 2/3, 5/6, 5/12, 7/12),
+        A vertex at (2/3, 1/3, 2/3, 1/3, 1/6, 5/6),
+        A vertex at (2/3, 5/6, 1/6, 1/3, 2/3, 1/3),
+        A vertex at (5/12, 5/6, 1/6, 7/12, 2/3, 1/3),
+        A vertex at (2/3, 7/12, 5/12, 1/3, 1/6, 5/6))
+
+    The following example illustrates the construction of Pi(8,4), in which there
+    are more than one halves. In particular, H = {2,6}, so we expect the ambient
+    dimension of Pi(8,4) to be 4. The vertices are
+    (1/4, 1/2, 3/4, 1, 1/4, 1/2, 3/4), (1/4, 1/2, 3/4, 1, 3/4, 1/2, 1/4),
+    (3/4, 1/2, 1/4, 1, 3/4, 1/2, 1/4), (3/4, 1/2, 1/4, 1, 1/4, 1/2, 3/4)::
+
+        sage: P = group_facet_polytope(8, 4, QQ, 'ppl')
+        sage: P.ambient_dim()
+        4
+        sage: P.Vrepresentation()
+        (A vertex at (1/4, 3/4, 1/4, 3/4),
+        A vertex at (1/4, 3/4, 3/4, 1/4),
+        A vertex at (3/4, 1/4, 3/4, 1/4),
+        A vertex at (3/4, 1/4, 1/4, 3/4))
+
+    .. NOTE::
+
+        The reduced group facet polytope is an orthogonal affine projection
+        of an isometric image of the group facet polytope onto its affine space.
+    """
+    curr_polytope = group_facet_polytope(q, f, base_ring, backend)
+    vertices = curr_polytope.vertices_list()
+    reduced_vertices = []
+    new_keep_indices = []
+    for index in keep_indices:
+        new_index = map_indices.index(index)
+        new_keep_indices.append(new_index)
+    for vertex in vertices:
+        new_vertex = [vertex[i] for i in new_keep_indices]
+        reduced_vertices.append(new_vertex)
+    reduced_polytope = Polyhedron(vertices=reduced_vertices, base_ring=base_ring, backend=backend)
+    return reduced_polytope
