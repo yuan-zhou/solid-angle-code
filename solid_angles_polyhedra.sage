@@ -489,3 +489,117 @@ def type_I_cone(n=4):
     rays = [list(II[k]) for k in range(n-1)]
     rays += [[-1] * n]
     return rays
+
+def solid_angles_of_onc_at_vertices_of_polyhedron(P, deg=100, eps=1e-6, base_ring=RR, decompose_to_tridiag=False, verbose=False, max_num_cones=1e6, minimize_cones=True, output_file_path='b.csv'):
+    r"""
+    Return the solid angles of the outer normal cones of the facets of the
+    polyhedron ``P``.
+
+    INPUT:
+
+    - ``P`` -- a polyhedron
+
+    OUTPUT:
+
+    - a list of solid angles
+
+    EXAMPLES:
+
+    In this example, we consider the outer normal cones at vertices of group facet polytopes::
+
+        sage: P = group_facet_polytope(q=6, f=3, base_ring=QQ, backend='ppl', verbose=True)
+        sage: list(solid_angles_of_onc_at_vertices_of_polyhedron(P, deg=100, eps=1e-5, base_ring=RR, decompose_to_tridiag=False, verbose=False))
+        [[(2/3, 1/3, 2/3, 1/3), 0.176209161907598],
+         [(1/3, 2/3, 2/3, 1/3), 0.250000000000000],
+         [(1, 0, 0, 1), 0.397552982424083],
+         [(1/3, 2/3, 1/3, 2/3), 0.176209161907598]]
+        
+
+    The following examples demonstrate that when the P is itself a cone, the
+    approximation of the solid angle measure of the dual cone of P is returned::
+
+        sage: P = Polyhedron(rays=[[1,0,0],[0,1,0],[0,0,1]], backend='ppl')
+        sage: list(solid_angles_of_onc_at_vertices_of_polyhedron(P))
+        [[(0, 0, 0), 0.125000000000000]]
+
+        sage: P = Polyhedron(rays=[[1,0],[1,1]], backend='ppl')
+        sage: list(solid_angles_of_onc_at_vertices_of_polyhedron(P))
+        [[(0, 0), 0.374998211389711]]
+
+    """
+    for v in P.face_generator(0):
+        vect = v.vertices()[0].vector()
+        Start_Time = time.process_time()
+        nc = v.normal_cone()
+        Execution_Time = time.process_time() - Start_Time
+        if verbose:
+            print("Constructing outer normal cone at {} took {} seconds".format(vect, Execution_Time))
+        simplicial_cone_matrices = triangulation_into_simplicial_cone_matrices(nc, decompose_to_tridiag=decompose_to_tridiag)
+        vect_num_cones = total_num_cones(simplicial_cone_matrices, decompose_to_tridiag=decompose_to_tridiag)
+        if vect_num_cones > max_num_cones:
+            print("The outer normal cone at {} decomposes into {} > {} cones".format(vect, vect_num_cones, max_num_cones))
+            continue
+        Start_Time = time.process_time()
+        sa_vect = solid_angle_measure(simplicial_cone_matrices, deg=deg, eps=eps, decompose_to_tridiag=decompose_to_tridiag, base_ring=base_ring, verbose=verbose)
+        Execution_Time = time.process_time() - Start_Time
+        row_to_append = [vect, vect_num_cones, simplicial_cone_matrices, eps, sa_vect, Execution_Time]
+        with open(output_file_path, mode="a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(row_to_append)
+        if verbose:
+            print("outer normal cone at {} has solid angle {}".format(vect, sa_vect))
+            print("solid angle computation took time {} ".format(Execution_Time))
+        yield [vect, sa_vect]
+
+
+def total_num_cones(list_of_simplicial_cones, decompose_to_tridiag=False):
+    r"""
+    Returns the total number of simplicial cones whose solid angles need to
+    be estimated in order to compute the sum of the solid angles of the given
+    list of simplicial cones.
+
+    INPUT:
+
+    - ``list_of_simplicial_cones`` -- a list of matrices, with each matrix
+    corresponding to a simplicial cone whose extreme rays are the row vectors
+    of the matrix
+
+    OUTPUT:
+
+    - an integer, the number of cones needed to compute the sum of the solid angles
+
+    EXAMPLES:
+
+    The following example shows that to compute the solid angle measure of 'P', the
+    solid angle measure of 6 simplicial cones with positive definite associated matrices
+    must be computed::
+
+        sage: cone_rays = [[1,0,0,0],[2,3,4,5],[1,0,3,4],[1,1,1,1],[2,0,3,4]]
+        sage: P = Polyhedron(rays = cone_rays)
+        sage: T = triangulation_into_simplicial_cone_matrices(P)
+        sage: total_num_cones(T)
+        6
+        
+
+    Below we consider the three-dimensiona cone with extreme rays as rows of 'A'. The
+    cone is simplicial and has positive definite associated matrix. We see its solid           angle may be readily computed::
+
+        sage: A = matrix([[1,0,0],[0,-1,0],[2,-1,1]])
+        sage: is_M_alpha_posdef(A)
+        True
+        sage: total_num_cones([A])
+        1
+
+    """
+    cone_count = 0
+    for simplicial_cone in list_of_simplicial_cones:
+        orthogonal_parts = list(generate_orthogonal_parts(simplicial_cone))
+        for orth_cone in orthogonal_parts:
+            if decompose_to_tridiag is True:
+                cone_count += len(list(generate_tridiag_cones_decomposition(orth_cone)))
+            else:
+                if is_M_alpha_posdef(orth_cone) == True:
+                    cone_count += 1
+                else:
+                    cone_count += len(list(generate_cones_decomposition(orth_cone)))
+    return cone_count
