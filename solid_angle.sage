@@ -526,6 +526,8 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
         logging.warning("cone not full-dimensional")
         return 0
     d = A.nrows()
+    if d == 1:
+        return base_ring(1/2)
     v = matrix(RDF, [A[i]/A[i].norm() for i in range(d)])
     da = int(d * (d-1) / 2)
     const = sqrt((v * v.transpose()).determinant()) / (RDF(4*pi) ** (d/2))
