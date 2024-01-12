@@ -448,3 +448,44 @@ def weyl_chamber_rays(family ='A', n=4):
     dualcone = cone.dual()
     weyl_chamber_rays = [list(t) for t in dualcone.rays()]
     return weyl_chamber_rays
+
+
+def type_I_cone(n=4):
+    r"""
+    Return a list of rays defining the type I cone in dimension 'n'.
+
+    INPUT:
+
+    - ``n`` -- positive integer (default: ``4``); the dimension of the
+    cone of interest
+
+    OUTPUT:
+
+    - a list of lists, each corresponding to an extreme ray of the cone
+
+    EXAMPLES:
+
+    In the following, we compute the extreme rays of ::
+
+        sage: type_I_cone(3)
+        [[1, 0, 0], [0, 1, 0], [-1, -1, -1]]
+
+        sage: type_I_cone(4)
+        [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [-1, -1, -1, -1]]
+
+        sage: type_I_cone(5)
+        [[1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 0],
+        [-1, -1, -1, -1, -1]]
+
+    .. NOTE::
+
+        Type I cones are inspired by the work of Hajja and Walker who
+        discuss what is here called I_4.
+    """
+    II = identity_matrix(n)
+    rays = [list(II[k]) for k in range(n-1)]
+    rays += [[-1] * n]
+    return rays
