@@ -1,4 +1,5 @@
 load("~/ma611-code/logging.sage")
+from sage.misc.decorators import cached_function
 
 
 # **********************************************************
@@ -520,6 +521,15 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
         normalized volume of convex polyhedral cones, in comparison
         to a half space. See Theorem 4.1 and Remark 4.2.
     """
+    ### cache gamma and factorial
+    @cached_function
+    def cached_gamma(x):
+        return gamma(x)
+    
+    @cached_function
+    def cached_factorial(n):
+        return factorial(n)
+
     if not hasattr(A, 'nrows'):
         A = matrix(A)
     if space == "ambient" and A.rank() < A.ncols():
@@ -562,7 +572,7 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
         P = Q # set of partitions f n into number_nonzero_parts
         for ps in P:
             sum_partition = 0
-            fact_denom = prod([factorial(h) for h in ps])
+            fact_denom = prod([cached_factorial(h) for h in ps])
             coef_0 = base_ring(t / fact_denom)
             comps_seq = Arrangements(ps, number_nonzero_parts) # all possible arrangements of ps
             for comps in comps_seq:
@@ -576,7 +586,7 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
                     s_i_inds = nonzero_inds[i]
                     S_list[s_i_inds[0]] += s_i
                     S_list[s_i_inds[1]] += s_i
-                coef = prod([(base_ring(0.5 * (gi + 1))).gamma() for gi in S_list])
+                coef = prod([(cached_gamma(0.5 * (gi + 1))) for gi in S_list])
                 sum_partition += coef_0 * coef * alphatoa
             sum_deg_n += sum_partition
         partial_sum += sum_deg_n
