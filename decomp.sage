@@ -1,4 +1,4 @@
-load('solid_angle_code.sage')
+#load('solid_angle_code.sage')
 
 def pointed_cone_from_projecting_out_lineality(P):
     r"""
@@ -102,7 +102,7 @@ def pointed_cone_from_projecting_out_lineality(P):
     else:
         return P
     
-def triangulation_into_simplicial_cone_matrices(P, decompose_to_tridiag=False):
+def triangulation_into_simplicial_cone_matrices(Q, decompose_to_tridiag=False,desired_property=None, max_num_triangs=20, connected=False, fine=False, regular=False, triang_list='matrices'):
     r"""
     Returns a list of matrices, each of which has rows corresponding to
     the extreme generators of a simplicial cone in the triangulation of
@@ -165,52 +165,94 @@ def triangulation_into_simplicial_cone_matrices(P, decompose_to_tridiag=False):
     curr_min = 1e6
 
     # Create pointed cone with same solid angle
-    pointed_cone = pointed_cone_from_projecting_out_lineality(P)
-    rays = matrix(pointed_cone.rays_list())
-    if rays.nrows() <= rays.ncols():
-        return [rays]
+    P = pointed_cone_from_projecting_out_lineality(Q)
+    P_rays = P.rays_list()
+    print("Pointed cone rays are ordered as {}".format(P_rays))
 
-    # Format for macaulay2 to use Topcom for triangulation
-    macaulay2('loadPackage "Topcom"')
-    macaulay_input_0 = str('A = transpose matrix {')
-    for row in rays.rows():
-        row_str = str(row)
-        ss = row_str.replace('(','{').replace(')','}')
-        macaulay_input_0 += ss
-    macaulay_input_0 += str('}')
-    macaulay_input = macaulay_input_0.replace('}{','},{')
+    if len(P_rays) == P.dim():
+        if triang_list == 'indices':
+            return([list(range(P.dim()))])
+        return([[matrix(P_rays)]])
 
-    macaulay2(macaulay_input)
-    Start_Time = time.process_time()
-    Ts = macaulay2('topcomAllTriangulations(A, Homogenize => false, Fine => false, RegularOnly => true)')
-    Execution_Time = time.process_time() - Start_Time
-    print("Enumerating all {} TOPCOM triangulations took {} seconds".format(len(Ts), Execution_Time))
+    # copied from docstring of triangulation for polyhedron using normaliz
+    # PointConfiguration is not adapted to inhomogeneous cones
+    # This is a hack. TODO: Implement the necessary things in
+    # PointConfiguration to accept such cases.
 
-    # Format TOPCOM triangulations list for sage
-    Triangulations = []
-    for triang in Ts:
-        input_string = str(str(triang))
-        formatted_string = input_string.replace('{', '[').replace('}', ']')
-        output_list = eval(formatted_string)
-        Triangulations.append(output_list)
-    # Compute number of cones in decomp of each triangulation to determine
-    # the triangulation yielding the minimim number
-    Start_Time = time.process_time()
-    for triangulation in Triangulations:
-        if len(triangulation) >= curr_min:
-            continue
-        triangulation_to_matrix_list = []
-        for simplex in triangulation:
-            simplicial_cone_matrix = matrix([rays[i] for i in simplex])
-            triangulation_to_matrix_list.append(simplicial_cone_matrix)
-        num_cones = total_num_cones(triangulation_to_matrix_list, decompose_to_tridiag=decompose_to_tridiag)
-        if num_cones < curr_min:
-            curr_min = num_cones
-            min_cones_triang = triangulation_to_matrix_list
-    Execution_Time = time.process_time() - Start_Time
-    print("Finding minimum cone decomposition took {} seconds".format(Execution_Time))
-    print("INFO: Triangulation decomposes to {} cones".format(curr_min))
-    return min_cones_triang
+
+    c = P.representative_point()
+    normed_v = ((1/(vector(r)*c))*vector(r) for r in P_rays)
+    pc = PointConfiguration(normed_v, connected=connected, fine=fine, regular=regular)
+
+
+    #iterate through topcom triangulations
+    my_generator = pc._TOPCOM_triangulations()
+    triangulations_done = 0
+    min_num_simplices = 1e6
+    min_num_cones = 1e6
+    num_orthog = 0
+
+    min_simplicial_cone_triangulation = []
+    min_cones_in_decomp_triangulation = []
+    most_orthogonal_triangulation = []
+
+    while triangulations_done <= max_num_triangs:
+        try:
+            item = next(my_generator)
+            print(item)
+        except StopIteration:
+            break  # Break the loop if there are no more items
+
+        triangulation = []
+        triangulations_done += 1
+        T_num_zeroes = 0
+
+        for simplex in item:
+            simplicial_cone_rays = [P_rays[i] for i in simplex]
+            simplex_matrix = matrix(simplicial_cone_rays)
+            for i in range(simplex_matrix.nrows()):
+                for j in range(i+1, simplex_matrix.nrows()):
+                    if simplex_matrix[i]*simplex_matrix[j] == 0:
+                        T_num_zeroes += 1
+            triangulation.append(simplex_matrix)
+        if desired_property == 'None':
+            if triang_list == 'indices':
+                return list([[P_rays.index(list(simplex[i])) for i in range(P.dim())] for simplex in triangulation])
+            return list(triangulation)
+
+        T_len = len(triangulation)
+        T_cones = total_num_cones(triangulation, decompose_to_tridiag=decompose_to_tridiag)
+
+        if T_len < min_num_simplices:
+            min_num_simplices = T_len
+            min_simplicial_cone_triangulation = triangulation
+
+        if T_cones < min_num_cones:
+            min_num_cones = T_cones
+            min_cones_in_decomp_triangulation = triangulation
+
+        if T_num_zeroes > num_orthog:
+            num_orthog = T_num_zeroes
+            most_orthogonal_triangulation = triangulation
+
+    if num_orthog == 0:
+        most_orthogonal_triangulation = triangulation
+
+    if desired_property == 'most_orthogonal':
+        if triang_list == 'indices':
+            return list([[P_rays.index(list(simplex[i])) for i in range(P.dim())] for simplex in most_orthogonal_triangulation])
+        return list([most_orthogonal_triangulation])
+    elif desired_property == 'min_simplicial_cones':
+        if triang_list == 'indices':
+            return list([[P_rays.index(list(simplex[i])) for i in range(P.dim())] for simplex in min_simplicial_cone_triangulation])
+        return list([min_simplicial_cone_triangulation])
+    elif desired_property == 'min_cones_in_decomp':
+        if triang_list == 'indices':
+            return list([[P_rays.index(list(simplex[i])) for i in range(P.dim())] for simplex in min_cones_in_decomp_triangulation])
+        return list([min_cones_in_decomp_triangulation])
+    elif desired_property == 'all':
+        print("Triangulations: - orthogonal - min cones - min simplices:")
+        return([most_orthogonal_triangulation, min_cones_in_decomp_triangulation, min_simplicial_cone_triangulation])
 
 def generate_orthogonal_parts(A):
     r"""
@@ -899,16 +941,14 @@ def solid_angle_measure(simplicial_cones_matrices, deg=100000, eps=1e-6, base_ri
         whose solid angles are computable via Ribando's formula.
     """
     num_cones = total_num_cones(simplicial_cones_matrices, decompose_to_tridiag=decompose_to_tridiag)
-    if verbose:
-        print("There are {} cones in the decomposition.".format(num_cones))
+    print("There are {} cones in the decomposition.".format(num_cones))
     eps_prime = eps/num_cones
-    angles_to_add = []
+    angles_to_add = 0
     for simplicial_cone in simplicial_cones_matrices:
-        solid_angle_factors = []
-        orthogonal_parts = list(generate_orthogonal_parts(simplicial_cone))
-        for orth_cone in orthogonal_parts:
-            if decompose_to_tridiag is True:
-                if verbose is True:
+        solid_angle_factors = 1
+        for orth_cone in generate_orthogonal_parts(simplicial_cone):
+            if decompose_to_tridiag:
+                if verbose:
                     print(list(generate_tridiag_cones_decomposition(orth_cone)))
                 t = sum(s*solid_angle_simplicial_and_posdef(c, deg=deg, eps=eps_prime, base_ring=base_ring, space="affine", tridiag=True, verbose=verbose)
                     for (c, s) in generate_tridiag_cones_decomposition(orth_cone))
@@ -918,11 +958,10 @@ def solid_angle_measure(simplicial_cones_matrices, deg=100000, eps=1e-6, base_ri
                         print([orth_cone, 1])
                     t = solid_angle_simplicial_and_posdef(orth_cone, deg=deg, eps=eps_prime, base_ring=base_ring, space="affine", tridiag=False, verbose=verbose)
                 else:
-                    if verbose is True:
+                    if verbose:
                         print(list(generate_cones_decomposition(orth_cone)))
                     t = sum(s*solid_angle_simplicial_and_posdef(c, deg=deg, eps=eps_prime, base_ring=base_ring, space="affine", verbose=verbose)
                         for (c, s) in generate_cones_decomposition(orth_cone))
-            solid_angle_factors.append(t)
-        angles_to_add.append(prod(solid_angle_factors))
-    print(sum(angles_to_add))
-    return(sum(angles_to_add))
+            solid_angle_factors *= t
+        angles_to_add += solid_angle_factors
+    return(angles_to_add)

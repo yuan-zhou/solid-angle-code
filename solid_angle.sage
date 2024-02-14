@@ -1,5 +1,5 @@
-load("~/ma611-code/logging.sage")
-from sage.misc.decorators import cached_function
+#load("~/ma611-code/logging.sage")
+#from sage.misc.decorators import cached_function
 
 
 # **********************************************************
@@ -417,21 +417,16 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
 
         sage: logging.disable(logging.INFO)
         sage: A = matrix([[1,0],[-1,-1]])
-        sage: solid_angle_general(A, eps=1e-9, simplicial=True) # abs tol 2e-9
+        sage: solid_angle_simplicial_and_posdef(A, eps=1e-9, simplicial=True) # abs tol 2e-9
         0.375
 
     This example shows that when the vectors are linearly dependent,
     the measure of the solid angle with respect to the ambient space is 0::
 
         sage: A = matrix([[2,0,0], [0,3,0], [-4,-4,0]])
-        sage: solid_angle_general(A, space="ambient")
+        sage: solid_angle_simplicial_and_posdef(A, space="ambient")
         WARNING: cone not full-dimensional
         0
-
-    In contrast, when considered in the affine space, the solid angle is 1::
-
-        sage: solid_angle_general(A, eps=1e-16, space="affine") # abs tol 1e-15
-        1
 
     This example shows the measure of the solid angle spanned by
     the vectors ``[2, sqrt(2), 3], [-1, 1, 2]``, and ``[-3, 0, 5/4]``, with
@@ -439,7 +434,7 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
     compared to value ``0.01183`` obtained by the arctan formula is <0.5%.::
 
         sage: A = matrix([[2, sqrt(2), 3], [-1, 1, 2], [-3, 0, 5/4]])
-        sage: a = solid_angle_general(A, deg=20, eps=1e-6)
+        sage: a = solid_angle_simplicial_and_posdef(A, deg=20, eps=1e-6)
         sage: b = solid_angle_3d(A)
         sage: abs(a-b)/b < 0.005
         True
@@ -449,10 +444,10 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
 
         sage: A = [[1,1,0,0,0],[-1,3,0,-4,1],[5,0,0,-1,0],
         ....:            [0,0,-2,1,4],[0,0,0,0,1]]
-        sage: solid_angle_general(A, deg=10)                   # abs tol 1e-15
+        sage: solid_angle_simplicial_and_posdef(A, deg=10)                   # abs tol 1e-15
         0.005330879073359687
 
-        sage: solid_angle_general(A, deg=12) # long time (18 s), abs tol 1e-15
+        sage: solid_angle_simplicial_and_posdef(A, deg=12) # long time (18 s), abs tol 1e-15
         0.004870472360500353
 
     This example demonstrates that the method works even when the input
@@ -460,7 +455,7 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
     result based on the ``solid_angle_3d`` function) is ``0.3012081...``::
 
         sage: A = matrix([[1,0,0],[-1,0,0],[-1,3,1],[1,0,-1]])
-        sage: solid_angle_general(A)                           # abs tol 1e-15
+        sage: solid_angle_simplicial_and_posdef(A)                           # abs tol 1e-15
         0.3012056062147818
 
     This example illustrates that when the input matrix has an
@@ -468,7 +463,7 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
 
         sage: A = matrix([[1,2,-1,2,0],[-3,0,0,0,2],[1,-2,-2/5,0,0],
         ....:            [0,0,0,-2,1],[-1,-1,0,-1,0]])
-        sage: solid_angle_general(A, deg=5)                    # abs tol 1e-15
+        sage: solid_angle_simplicial_and_posdef(A, deg=5)                    # abs tol 1e-15
         WARNING: Associated matrix NOT positive definite, series NOT converge
         0.027044019290803845
 
@@ -486,25 +481,23 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
 
         sage: A = matrix([[1/2, -1/2, -1/2, 1/2],[1/2, 1/10, 7/10, 1/2],
         ....:     [-4/7, 4/7, 1/7, 4/7], [-4/11, -5/11, 8/11, 4/11]])
-        sage: solid_angle_general(A, deg=0)                    # abs tol 1e-15
-        0.04870129870129871
+        sage: solid_angle_simplicial_and_posdef(A, deg=1)                    # abs tol 1e-15
+        0.0336018459285471
 
-        sage: solid_angle_general(A, deg=1)                    # abs tol 1e-15
-        0.03360184592862353
+        sage: solid_angle_simplicial_and_posdef(A, deg=2)                    # abs tol 1e-15
+        0.0431921854297581
 
-        sage: solid_angle_general(A, deg=2)                    # abs tol 1e-15
-        0.04319218542971285
+        sage: solid_angle_simplicial_and_posdef(A, deg=5)                    # abs tol 1e-15
+        0.0399696621189556
 
-        sage: solid_angle_general(A, deg=5)                    # abs tol 1e-15
-        0.03996966211891789
+        sage: solid_angle_simplicial_and_posdef(A, deg=10)                   # abs tol 1e-15
+        0.0404638509738031
 
-        sage: solid_angle_general(A, deg=10)                   # abs tol 1e-15
-        0.0404638509737549
+        # 8.86 seconds
+        sage: solid_angle_simplicial_and_posdef(A, deg=20)  #  abs tol 1e-15
+        0.0404390539098666
 
-        sage: solid_angle_general(A, deg=20)  # long time (28s), abs tol 1e-15
-        0.04043924941007705
-
-        sage: solid_angle_general(A, deg=40)  # long time (28s), abs tol 1e-15
+        sage: solid_angle_simplicial_and_posdef(A, deg=40)  #  abs tol 1e-15
         0.04043924941007705
 
     .. NOTE::
@@ -521,89 +514,142 @@ def solid_angle_simplicial_and_posdef(A, eps=1e-9, deg=100, space="ambient", tri
         normalized volume of convex polyhedral cones, in comparison
         to a half space. See Theorem 4.1 and Remark 4.2.
     """
-    ### cache gamma and factorial
-    @cached_function
-    def cached_gamma(x):
-        return gamma(x)
-    
-    @cached_function
-    def cached_factorial(n):
-        return factorial(n)
-
+    Start_Time =  time.process_time()
     if not hasattr(A, 'nrows'):
         A = matrix(A)
     if space == "ambient" and A.rank() < A.ncols():
         logging.warning("cone not full-dimensional")
         return 0
     d = A.nrows()
+    # if cone is 1 ray, affine solid angle is 1/2
     if d == 1:
         return base_ring(1/2)
+    # the only multivariables contributing to the sum are the nonzero ones
     v = matrix([A[i]/A[i].norm() for i in range(d)]) # leave as norm, otherwise lose 0s in vtv
-    vtv = v * v.transpose()
-    const = RDF(sqrt((vtv).determinant()) / ((4*pi.n()) ** (d/2)))
-    alpha = []
-    nonzero_inds = []
-    if tridiag is True: # only check entries with indices (i,i+1)
-        for i in range(d - 1):
-            dot_prod = vtv[i][i+1]
-            if dot_prod != 0:
-                alpha += [base_ring(dot_prod)] # now we change to RDF so we dont carry symbolic
-                nonzero_inds += [(i, i+1)]
+    dot_prod_matrix = v * v.transpose()
+    
+    if tridiag: # if tridiag is True, we only consider the tridiagonal part of the dot product matrix
+        nonzero_inds = [(i, i+1) for i in range(d - 1) if dot_prod_matrix[i][i+1] != 0]
     else:
-        for i in range(d - 1):
-            for j in range(i + 1, d):
-                dot_prod = vtv[i][j]
-                if dot_prod != 0:
-                    alpha += [base_ring(dot_prod)] # now we change to RDF so we dont carry symbolic
-                    nonzero_inds += [(i,j)]
+        nonzero_inds = [(i, j) for i in range(d - 1) for j in range(i + 1, d) if dot_prod_matrix[i][j] != 0]
+    alpha = [base_ring(dot_prod_matrix[i][j]) for (i, j) in nonzero_inds]
     number_nonzero_parts = len(alpha)
+    # if all dihedral angles are 0, the cone is an orthant
     if number_nonzero_parts == 0:
-        return base_ring(1/2**d)
+        return base_ring(1/2 ** d)
+    # const will be det|v| * 1/(4*pi)^(d/2) * sqrt(pi) ^ (# zero parts)
+    const = base_ring(sqrt((dot_prod_matrix).determinant())) / base_ring((4*pi) ** (d/2))
+    threshhold = eps / const
+
+    # create a list of dictionaries of the dot products raised to powers
     alpha_powers = [{0: 1} for _ in range(number_nonzero_parts)]
-    partial_sum = (pi.n() ** (d/2))
-    t = 1
+
+    # zero term for power series
+    partial_sum = base_ring(pi ** (d/2))
+    two_to_deg = 1
     Q = [[1] + [0] * (number_nonzero_parts - 1)]
     prev_sum_deg_n = partial_sum
+
     for n in range(1, deg + 1):
         for k in range(number_nonzero_parts):
             alpha_powers[k][n] = alpha_powers[k][n-1] * alpha[k]
-        t *= (-2)
+        two_to_deg *= -2
         sum_deg_n = 0
-        P = Q # set of partitions f n into number_nonzero_parts
+        P = Q # set of partitions of n into number_nonzero_parts
         for ps in P:
             sum_partition = 0
-            fact_denom = prod([cached_factorial(h) for h in ps])
-            coef_0 = base_ring(t / fact_denom)
-            comps_seq = Arrangements(ps, number_nonzero_parts) # all possible arrangements of ps
-            for comps in comps_seq:
+            fact_denom = 1
+            for h in ps:
+                fact_denom *= recursive_gamma(h + 1)
+            coef_0 = base_ring(two_to_deg / fact_denom)
+            comps_seq = Arrangements(ps, number_nonzero_parts) # a list of all permutations of ps
+            for comps in comps_seq: # time here  ... below is bad ... do two comps have lot of same values below? how many common gamma
                 alphatoa = 1
                 cs = list(comps)
+                S_dict = {}
+                # for a given multidegree, compute alpha to the multidegree, and the gamma product
                 for k in range(number_nonzero_parts):
                     alphatoa *= alpha_powers[k][cs[k]]
-                S_list = [0] * d
-                for i in range(number_nonzero_parts):
-                    s_i = cs[i]
-                    s_i_inds = nonzero_inds[i]
-                    S_list[s_i_inds[0]] += s_i
-                    S_list[s_i_inds[1]] += s_i
-                coef = prod([(cached_gamma(0.5 * (gi + 1))) for gi in S_list])
-                sum_partition += coef_0 * coef * alphatoa
-            sum_deg_n += sum_partition
+                    row_index, col_index = nonzero_inds[k]
+                    S_dict[row_index] = S_dict.get(row_index, 0) + cs[k]
+                    S_dict[col_index] = S_dict.get(col_index, 0) + cs[k]
+                # Compute coef using the aggregated values
+                coef = 1
+                for s_i in S_dict.values():
+                    coef *= recursive_gamma(0.5 * (s_i + 1))
+                sum_partition +=  coef * alphatoa
+            sum_deg_n += coef_0 * sum_partition
         partial_sum += sum_deg_n
         if verbose == True:
             print([n, (const * sum_deg_n), (const * partial_sum), (const * 0.5 * (abs(sum_deg_n) + abs(prev_sum_deg_n)))])
-        if ((const * 0.5 * (abs(sum_deg_n) + abs(prev_sum_deg_n))) < eps):
-            if (const * (partial_sum)) > 0:
+        if (0.5 * (abs(sum_deg_n) + abs(prev_sum_deg_n))) < threshhold:
+            if partial_sum > 0:
                 break
         prev_sum_deg_n = sum_deg_n
         Q = partitions_iter(P, number_nonzero_parts)
-    print (const * (partial_sum))
+    Execution_Time = time.process_time() - Start_Time
+    print('Simplicial cone {} truncated at degree {} and took time {} to compute its solid angle of {}'.format(A, n, Execution_Time, base_ring(const * (partial_sum))))
     return base_ring(const * (partial_sum))
 
 
 # **********************************************************
 #                    Helper functions
 # **********************************************************
+@cached_function
+def recursive_gamma(n):
+    r"""
+    Return gamma value of half integers at least 1/2, computed recursively and cached.
+
+    EXAMPLES:
+
+    Here we show that values are accurate::
+
+        sage: recursive_gamma(124.5)
+        1.35119243967382e206
+        sage: gamma(124.5)
+        1.35119243967040e206
+
+        sage: recursive_gamma(39)
+        523022617466601111760007224100074291200000000
+        sage: gamma(39)
+        523022617466601111760007224100074291200000000
+
+
+
+    This example shows that for input belonging toexact rings, the ouput is a
+    symbolic expression, while for inexact rings, the output is in RR, matching
+    that of the gamma function::
+
+        sage: recursive_gamma(7/2)
+        15/8*sqrt(pi)
+        sage: type(recursive_gamma(7/2))
+        <class 'sage.symbolic.expression.Expression'>
+        sage: gamma(7/2)
+        15/8*sqrt(pi)
+        sage: type(gamma(7/2))
+        <class 'sage.symbolic.expression.Expression'>
+
+        sage: recursive_gamma(3.5)
+        3.32335097044784
+        sage: type(recursive_gamma(3.5))
+        <class 'sage.rings.real_mpfr.RealNumber'>
+        sage: gamma(3.5)
+        3.32335097044784
+        sage: type(gamma(3.5))
+        <class 'sage.rings.real_mpfr.RealNumber'>
+    """
+    n_parent = parent(n)
+    if n_parent.is_exact():
+        n_parent = SR
+    if n == 0.5:
+        return n_parent(sqrt(pi))  # Precomputed value for gamma(0.5)
+    elif n == 1:
+        return 1
+    else:
+        gamma_val = (n - 1) * recursive_gamma(n - 1)
+        return gamma_val
+
+
 def simplicial_subcones_decomposition(A):
     r"""
     Return a list of matrices that give the extreme rays
@@ -770,7 +816,7 @@ def partitions_iter(c, k):
     return X
 
 
-def is_M_alpha_posdef(A):
+def is_M_alpha_posdef(A, exact=True):
     r"""
     Return whether the associated matrix `M(1, -|\alpha_{ij}|)` for the given
     matrix ``A`` is positive definite or not (see note).
@@ -826,20 +872,24 @@ def is_M_alpha_posdef(A):
         beyond dimension three," the series converges if and only if
         the associated matrix is positive definite.
     """
+    M_exact = vtv(A)
     d = A.nrows()
-    M_exact = A * A.transpose()  # unnormalized matrix with diag entries not 1
-    vnorm = [A[i].norm() for i in range(d)]
-    M = matrix(RDF, d)
+    M_RDF = matrix(RDF, d)
     for i in range(d):
         for j in range(d):
             if i != j:
                 M_exact[i, j] = - abs(M_exact[i, j])
-            M[i, j] = RDF(M_exact[i, j] / (vnorm[i] * vnorm[j]))
+            if i == j:
+                M_exact[i, j] = 1
+            M_RDF[i, j] = RDF(M_exact[i, j])
     try:  # We prefer testing pos-def on M_exact over exact ring
         t = M_exact.is_positive_definite()
     except ValueError:  # Note that M is pos-def iff M_exact is pos-def
-        t = M.is_positive_definite()
-    logging.info("Associated Matrix:\n%s" % M)
+        t = M_RDF.is_positive_definite()
+    if exact:
+        logging.info("Associated Matrix:\n%s" % M_exact)
+    else:
+        logging.info("Associated Matrix:\n%s" % M_RDF)
     return t
 
 def vtv(A):
@@ -884,13 +934,15 @@ def vtv(A):
     d = A.nrows()
     M_exact = A * A.transpose()
     vnorm = [A[i].norm() for i in range(d)]
-    M = matrix(RDF, d)
+    M = matrix(SR, d) # because of norm, vtv is likely in SR
     for i in range(d):
         for j in range(d):
             if i != j:
-                M_exact[i, j] = M_exact[i, j]
-            M[i, j] = RDF(M_exact[i, j] / (vnorm[i] * vnorm[j]))
+                M[i, j] = M_exact[i, j] / (vnorm[i] * vnorm[j])
+            if i == j:
+                M[i, j] = 1
     return M
+
 
 def min_eigenval_assoc_matrix(A):
     r"""
@@ -922,13 +974,12 @@ def min_eigenval_assoc_matrix(A):
         sage: min_eigenval_assoc_matrix(A)
         0.06443211734691756
     """
+    M_exact = vtv(A)
     d = A.nrows()
-    M_exact = A * A.transpose()
-    vnorm = [A[i].norm() for i in range(d)]
-    M = matrix(RDF, d)
     for i in range(d):
         for j in range(d):
             if i != j:
                 M_exact[i, j] = - abs(M_exact[i, j])
-            M[i, j] = RDF(M_exact[i, j] / (vnorm[i] * vnorm[j]))
-    return min(M.eigenvalues())
+            if i == j:
+                M_exact[i, j] = 1
+    return RDF(min(M_exact.eigenvalues()))

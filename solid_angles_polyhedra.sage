@@ -1,8 +1,8 @@
 import time
 import csv
-load('decomp.sage')
+######load('decomp.sage')
 
-def group_facet_polytope(q=7, f=6, base_ring=QQ, backend='ppl', verbose=False):
+def group_facet_polytope(q=7, f=6, base_ring=QQ, backend='normaliz', verbose=False):
     r"""
     Return the group facet polytope Pi(q,f) in dimension q-2-|H|
     where H is the set of halves, i.e., the set of positive integers
@@ -195,10 +195,12 @@ def group_facet_polytope(q=7, f=6, base_ring=QQ, backend='ppl', verbose=False):
 
     E = list(group_facet_polytope_eqns(q, f, verbose=verbose))
     I = list(group_facet_polytope_ieqs(q, f))
+    # leave Polyhedron parameter "minimize" as default value True
     P = Polyhedron(eqns=E, ieqs=I, base_ring=base_ring, backend=backend)
     return P
 
-def reduced_group_facet_polytope(q=7, f=6, map_indices=[0,1,3,4], keep_indices=[0,1], base_ring=QQ, backend='ppl'):
+
+def reduced_group_facet_polytope(q=7, f=6, base_ring=QQ, backend='normaliz'):
     r"""
     Return the reduced group facet polytope Pi(q,f) in dimension (q-2-|H|)/2
     where H is the set of halves, i.e., the set of positive integers
@@ -324,20 +326,11 @@ def reduced_group_facet_polytope(q=7, f=6, map_indices=[0,1,3,4], keep_indices=[
         of an isometric image of the group facet polytope onto its affine space.
     """
     curr_polytope = group_facet_polytope(q, f, base_ring, backend)
-    vertices = curr_polytope.vertices_list()
-    reduced_vertices = []
-    new_keep_indices = []
-    for index in keep_indices:
-        new_index = map_indices.index(index)
-        new_keep_indices.append(new_index)
-    for vertex in vertices:
-        new_vertex = [vertex[i] for i in new_keep_indices]
-        reduced_vertices.append(new_vertex)
-    reduced_polytope = Polyhedron(vertices=reduced_vertices, base_ring=base_ring, backend=backend)
-    return reduced_polytope
+    # affine hull projection inherits backend of original polytope
+    return curr_polytope.affine_hull_projection()
 
 
-def blocker_polyhedron(q=7, f=6, base_ring=QQ, backend='ppl', verbose=False):
+def blocker_polyhedron(q=7, f=6, base_ring=QQ, backend='normaliz', verbose=False):
     r"""
     Return the blocker of P(q,f) in dimension q-2-|H|
     where H is the set of halves, i.e., the set of positive integers
@@ -375,15 +368,15 @@ def blocker_polyhedron(q=7, f=6, base_ring=QQ, backend='ppl', verbose=False):
         <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
         sage: P.Vrepresentation()
         (A ray in the direction (0, 0, 0, 1),
-        A ray in the direction (0, 0, 1, 0),
-        A ray in the direction (0, 1, 0, 0),
-        A ray in the direction (1, 0, 0, 0),
-        A vertex at (1/6, 1/3, 2/3, 5/6),
-        A vertex at (2/5, 4/5, 1/5, 3/5),
-        A vertex at (3/4, 5/8, 3/8, 1/4),
-        A vertex at (3/4, 1/3, 2/3, 1/4))
+         A ray in the direction (0, 0, 1, 0),
+         A ray in the direction (0, 1, 0, 0),
+         A ray in the direction (1, 0, 0, 0),
+         A vertex at (1/6, 1/3, 2/3, 5/6),
+         A vertex at (2/5, 4/5, 1/5, 3/5),
+         A vertex at (3/4, 5/8, 3/8, 1/4),
+         A vertex at (3/4, 1/3, 2/3, 1/4))
 
-    This example shows the blocker of P(5,4)::
+        This example shows the blocker of P(5,4)::
 
         sage: B = blocker_polyhedron(q=5, f=4, base_ring=QQ, backend='ppl')
         sage: B.Vrepresentation()
@@ -490,7 +483,7 @@ def type_I_cone(n=4):
     rays += [[-1] * n]
     return rays
 
-def solid_angles_of_onc_at_vertices_of_polyhedron(P, deg=100, eps=1e-6, base_ring=RR, decompose_to_tridiag=False, verbose=False, max_num_cones=1e6, minimize_cones=True, output_file_path='b.csv'):
+def solid_angles_of_onc_at_vertices_of_polyhedron(P, deg=100, eps=1e-6, base_ring=RR, decompose_to_tridiag=False, verbose=False, desired_property=None, max_num_triangs = 20, output_file_path='b.csv'):
     r"""
     Return the solid angles of the outer normal cones of the facets of the
     polyhedron ``P``.
@@ -513,7 +506,7 @@ def solid_angles_of_onc_at_vertices_of_polyhedron(P, deg=100, eps=1e-6, base_rin
          [(1/3, 2/3, 2/3, 1/3), 0.250000000000000],
          [(1, 0, 0, 1), 0.397552982424083],
          [(1/3, 2/3, 1/3, 2/3), 0.176209161907598]]
-        
+
 
     The following examples demonstrate that when the P is itself a cone, the
     approximation of the solid angle measure of the dual cone of P is returned::
@@ -527,29 +520,44 @@ def solid_angles_of_onc_at_vertices_of_polyhedron(P, deg=100, eps=1e-6, base_rin
         [[(0, 0), 0.374998211389711]]
 
     """
-    for v in P.face_generator(0):
-        vect = v.vertices()[0].vector()
-        Start_Time = time.process_time()
-        nc = v.normal_cone()
-        Execution_Time = time.process_time() - Start_Time
-        if verbose:
-            print("Constructing outer normal cone at {} took {} seconds".format(vect, Execution_Time))
-        simplicial_cone_matrices = triangulation_into_simplicial_cone_matrices(nc, decompose_to_tridiag=decompose_to_tridiag)
-        vect_num_cones = total_num_cones(simplicial_cone_matrices, decompose_to_tridiag=decompose_to_tridiag)
-        if vect_num_cones > max_num_cones:
-            print("The outer normal cone at {} decomposes into {} > {} cones".format(vect, vect_num_cones, max_num_cones))
-            continue
-        Start_Time = time.process_time()
-        sa_vect = solid_angle_measure(simplicial_cone_matrices, deg=deg, eps=eps, decompose_to_tridiag=decompose_to_tridiag, base_ring=base_ring, verbose=verbose)
-        Execution_Time = time.process_time() - Start_Time
-        row_to_append = [vect, vect_num_cones, simplicial_cone_matrices, eps, sa_vect, Execution_Time]
-        with open(output_file_path, mode="a", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(row_to_append)
-        if verbose:
-            print("outer normal cone at {} has solid angle {}".format(vect, sa_vect))
-            print("solid angle computation took time {} ".format(Execution_Time))
-        yield [vect, sa_vect]
+    # Define your column titles
+    column_titles = ["Vertex", "Triangulation type", "Total_Num_Cones", "Simplicial_Cone_Matrices", "Epsilon", "Solid_Angle", "CPU_Time"]
+
+    # Open the CSV file in write mode and write the column titles
+    with open(output_file_path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(column_titles)
+
+        for v in P.face_generator(0):
+            vect = v.vertices()[0].vector()
+            print("Outer normal cone at {}:".format(vect))
+            Start_Time = time.process_time()
+            nc = v.normal_cone()
+            Execution_Time = time.process_time() - Start_Time
+            if verbose is True:
+                print("Constructing outer normal cone at {} took {} seconds".format(vect, Execution_Time))
+                print(nc.Vrepresentation())
+            Start_Time = time.process_time()
+            T = triangulate_into_simplicial_cones(nc, decompose_to_tridiag=decompose_to_tridiag, desired_property=desired_property, max_num_triangs=max_num_triangs)
+            Execution_Time = time.process_time() - Start_Time
+            if verbose is True:
+                print("Finding triangulation took {} seconds".format(Execution_Time))
+            for i in range(len(T)):
+                if len(T) == 1:
+                    triang_type = desired_property
+                else:
+                    triang_types = ['most_orthogonal', 'min_simplicial_cones', 'min_cones_in_decomp']
+                    triang_type = triang_types[i]
+                simplicial_cone_matrices = T[i]
+                Start_Time = time.process_time()
+                sa_vect = solid_angle_measure(simplicial_cone_matrices, deg=deg, eps=eps, decompose_to_tridiag=decompose_to_tridiag, base_ring=base_ring, verbose=verbose)
+                Execution_Time = time.process_time() - Start_Time
+                row_to_append = [vect, triang_type, total_num_cones(simplicial_cone_matrices), simplicial_cone_matrices, eps, sa_vect, Execution_Time]
+                writer.writerow(row_to_append)
+                print("outer normal cone at {} has solid angle {}".format(vect, sa_vect))
+                print("solid angle computation took time {} ".format(Execution_Time))
+                print('   ')
+                yield [vect, sa_vect]
 
 
 def total_num_cones(list_of_simplicial_cones, decompose_to_tridiag=False):
@@ -579,7 +587,7 @@ def total_num_cones(list_of_simplicial_cones, decompose_to_tridiag=False):
         sage: T = triangulation_into_simplicial_cone_matrices(P)
         sage: total_num_cones(T)
         6
-        
+
 
     Below we consider the three-dimensiona cone with extreme rays as rows of 'A'. The
     cone is simplicial and has positive definite associated matrix. We see its solid           angle may be readily computed::
@@ -593,13 +601,11 @@ def total_num_cones(list_of_simplicial_cones, decompose_to_tridiag=False):
     """
     cone_count = 0
     for simplicial_cone in list_of_simplicial_cones:
-        orthogonal_parts = list(generate_orthogonal_parts(simplicial_cone))
-        for orth_cone in orthogonal_parts:
-            if decompose_to_tridiag is True:
-                cone_count += len(list(generate_tridiag_cones_decomposition(orth_cone)))
+        for orth_cone in generate_orthogonal_parts(simplicial_cone):
+            if decompose_to_tridiag:
+                cone_count += sum(1 for _ in generate_tridiag_cones_decomposition(orth_cone))
+            elif is_M_alpha_posdef(orth_cone):
+                cone_count += 1
             else:
-                if is_M_alpha_posdef(orth_cone) == True:
-                    cone_count += 1
-                else:
-                    cone_count += len(list(generate_cones_decomposition(orth_cone)))
+                cone_count += sum(1 for _ in generate_cones_decomposition(orth_cone))
     return cone_count
